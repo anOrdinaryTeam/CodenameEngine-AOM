@@ -14,7 +14,7 @@
 
 		<!-- CNE Core Libraries -->
 		<git name="flixel-animate" url="https://github.com/CodenameCrew/cne-flixel-animate" skipDeps="true"/>
-		<git name="hscript-improved" url="https://github.com/CodenameCrew/hscript-improved" ref="codename-dev"/>
+		<git name="hscript-improved" url="https://github.com/ShadowEngine/ShadowScript" ref="codename-dev"/>
 		<git name="away3d" url="https://github.com/CodenameCrew/away3d" skipDeps="true"/>
 
 		<!-- Other Libraries -->
@@ -25,28 +25,5 @@
 		<lib name="format"/>
 		<lib name="markdown"/>
 		<lib name="nape-haxe4"/>
-
-		<!-- For building lime -->
-		<!-- <lib global="true" name="hxp"/> <lib name="hxp"/> -->
-		<!-- <lib global="true" name="format"/> <lib name="format"/> -->
 	</if>
-
-	<!-- Hxcpp Building -->
-	<if cond="build-hxcpp || all">
-		<print pretty="true">Rebuilding Hxcpp...</print>
-
-		<!-- Build hxcpp -->
-		<cmd inLib="hxcpp" dir="tools/hxcpp" cmd="haxe compile.hxml" />
-		<cmd inLib="lime" cmd="haxelib run lime rebuild hxcpp"/>
-	</if>
-
-	<!-- Lime Building -->
-	<if cond="build-lime">
-		<print pretty="true">Rebuilding Lime...</print>
-
-		<!-- Build lime -->
-		<cmd inLib="lime" dir="tools" cmd="haxe tools.hxml"/>
-		<cmd inLib="lime" cmd="haxelib run lime rebuild $PLATFORM -nocolor -nocffi -release"/>
-	</if>
-
 </libraries>
