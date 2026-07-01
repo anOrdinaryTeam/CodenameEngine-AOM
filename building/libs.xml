@@ -5,7 +5,7 @@
 
 		<!-- OpenFL & Lime (Required for Flixel) -->
 		<git name="openfl" url="https://github.com/anOrdinaryTeam/cne-openfl" ref="old" />
-		<lib name="lime" url="https://github.com/anOrdinaryTeam/aom-lime" />
+		<git name="lime" url="https://github.com/anOrdinaryTeam/aom-lime" />
 
 		<!-- Flixel -->
 		<git name="flixel" url="https://github.com/anOrdinaryTeam/cne-flixel" ref="old" />
