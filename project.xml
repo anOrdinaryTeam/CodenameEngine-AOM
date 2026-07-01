@@ -167,12 +167,6 @@
 
 	<assets path='art/readme.txt' rename='do NOT readme.txt' />
 
-	<!-- OpenAL config -->
-	<section if="desktop">
-		<assets path="building/alsoft.txt" rename="plugins/alsoft.ini" type="text" if="windows"/>
-		<assets path="building/alsoft.txt" rename="plugins/alsoft.conf" type="text" unless="windows"/>
-	</section>
-
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<haxeflag name="--macro" value="funkin.backend.system.macros.BuildInfo.printBuildInfo()" />
