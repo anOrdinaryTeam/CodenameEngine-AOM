@@ -31,7 +31,7 @@ class AssetsLibraryList extends AssetLibrary {
 	#end
 
 	private var cachePaths:Map<String, AssetLibrary> = [];
-	private var cacheNonExistentPaths:Map<String, Int> = [];
+	private var cacheNonExistentPaths:Map<String, Float> = [];
 
 	public function removeLibrary(lib:AssetLibrary) {
 		if (lib != null) {
@@ -57,9 +57,8 @@ class AssetsLibraryList extends AssetLibrary {
 		if (!id.startsWith("assets/") && existsSpecific('assets/$id', type, source))
 			return true;
 
-		// There's a mod that heavily relies on addons and that can causes lags just to get a path.
-		final sec = Date.now().getSeconds();
-		if (cacheNonExistentPaths.exists(id) && sec - 10 < cacheNonExistentPaths.get(id)) {
+		var now = Date.now().getTime();
+		if (cacheNonExistentPaths.exists(id) && now - 10000 < cacheNonExistentPaths.get(id)) {
 			return false;
 		}
 		else if (cachePaths.exists(id)) {
@@ -67,18 +66,15 @@ class AssetsLibraryList extends AssetLibrary {
 			else cachePaths.remove(id);
 		}
 
-
 		for(k=>l in libraries) {
 			if (shouldSkipLib(l, source)) continue;
 			if (l.exists(id, type)) {
-				//trace("EXISTS", id, type, source);
 				cachePaths.set(id, l);
 				return true;
 			}
 		}
 
-		//trace("DOESNT EXISTS", id, type, source);
-		cacheNonExistentPaths.set(id, sec);
+		cacheNonExistentPaths.set(id, now);
 		return false;
 	}
 	public override inline function exists(id:String, type:String):Bool

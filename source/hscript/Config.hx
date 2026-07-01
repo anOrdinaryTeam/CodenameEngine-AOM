@@ -26,6 +26,15 @@ class Config {
 		#end
 	];
 
+	// Runs support for typedef support in these
+	public static final ALLOWED_TYPEDEFS = [
+		#if !DOCUMENTATION
+		"flixel",
+		"flixel.addons",
+		"openfl",
+		#end
+	];
+
 	// Incase any of your files fail
 	// These are the module names
 	public static final DISALLOW_CUSTOM_CLASSES = [
@@ -34,5 +43,9 @@ class Config {
 
 	public static final DISALLOW_ABSTRACT_AND_ENUM = [
 		"funkin.backend.scripting.events.sprite.PlayAnimContext", // Error: expected member name or ';' after declaration specifiers, Due to define macro from math.h
+	];
+
+	public static final DISALLOW_TYPEDEFS = [
+		"haxe", // by default
 	];
 }
