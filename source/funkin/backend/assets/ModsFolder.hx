@@ -23,7 +23,7 @@ class ModsFolder {
 	/**
 	 * Current mod folder. Will affect `Paths`.
 	 */
-	public static var currentModFolder:String = null;
+	public static var currentModFolder:String = "AOM-Revival";
 	/**
 	 * Path to the `mods` folder.
 	 */
