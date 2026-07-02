@@ -116,7 +116,6 @@ final class Logs {
 		}
 		NativeAPI.setConsoleColors();
 		Sys.print("\r\n");
-		Sys.stdout().flush();
 		__showing = false;
 		#elseif mobile
 		while(__showing) {
@@ -125,7 +124,6 @@ final class Logs {
 		__showing = true;
 		@:privateAccess
 		Sys.print([for(t in text) t.text].join(""));
-		Sys.stdout().flush();
 		__showing = false;
 		#else
 		@:privateAccess
