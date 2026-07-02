@@ -13,7 +13,7 @@ jobs:
       - name: Pulling the new commit
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          submodules: true
       - name: Setting up Haxe
         uses: krdlab/setup-haxe@v2
         with:
@@ -34,7 +34,7 @@ jobs:
           haxe -cp commandline -D analyzer-optimize --run Main setup -s --no-vscheck
       - name: Building the game
         run: |
-          haxelib run lime build windows -DCOMPILE_EXPERIMENTAL
+          haxelib run lime build windows
       - name: Uploading artifact (executable)
         uses: actions/upload-artifact@v4
         with:
