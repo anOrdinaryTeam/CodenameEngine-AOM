@@ -28,6 +28,7 @@ class Options
 	public static var fpsCounter:Bool = true;
 	public static var autoPause:Bool = true;
 	public static var antialiasing:Bool = true;
+	public static var vsync:Bool = false;
 	public static var volume:Float = 1;
 	public static var volumeMusic:Float = 1;
 	public static var volumeSFX:Float = 1;
@@ -228,11 +229,19 @@ class Options
 	public static function applySettings() {
 		applyKeybinds();
 		applyQuality();
+		applyVSync();
 
 		FlxG.sound.defaultMusicGroup.volume = volumeMusic;
 		FlxG.autoPause = autoPause;
 		if (FlxG.updateFramerate < framerate) FlxG.drawFramerate = FlxG.updateFramerate = framerate;
 		else FlxG.updateFramerate = FlxG.drawFramerate = framerate;
+	}
+
+	public static function applyVSync() {
+		#if native
+		if (FlxG.stage != null && FlxG.stage.window != null)
+			FlxG.stage.window.vsync = vsync;
+		#end
 	}
 
 	public static function applyQuality() {

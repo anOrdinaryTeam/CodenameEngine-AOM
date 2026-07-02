@@ -119,6 +119,7 @@ class NativeWindow
 			parent.__x = NativeCFFI.lime_window_get_x(handle);
 			parent.__y = NativeCFFI.lime_window_get_y(handle);
 			parent.__hidden = (Reflect.hasField(attributes, "hidden") && attributes.hidden);
+			parent.__vsync = contextAttributes.vsync;
 			parent.id = NativeCFFI.lime_window_get_id(handle);
 		}
 
@@ -481,6 +482,18 @@ class NativeWindow
 		{
 			#if (!macro && lime_cffi)
 			NativeCFFI.lime_window_set_borderless(handle, value);
+			#end
+		}
+
+		return value;
+	}
+
+	public function setVSync(value:Bool):Bool
+	{
+		if (handle != null)
+		{
+			#if (!macro && lime_cffi)
+			NativeCFFI.lime_window_set_vsync(handle, value);
 			#end
 		}
 

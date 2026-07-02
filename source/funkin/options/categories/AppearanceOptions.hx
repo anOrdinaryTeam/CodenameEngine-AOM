@@ -8,6 +8,9 @@ class AppearanceOptions extends TreeMenuScreen {
 			30, 240, 1,
 			'framerate', __changeFPS
 		));
+		#if native
+		add(new Checkbox(getNameID('vsync'), getDescID('vsync'), 'vsync', Options.applyVSync));
+		#end
 		add(new Checkbox(getNameID('flashingMenu'), getDescID('flashingMenu'), 'flashingMenu'));
 		add(new Checkbox(getNameID('colorHealthBar'), getDescID('colorHealthBar'), 'colorHealthBar'));
 		add(new Checkbox(getNameID('week6PixelPerfect'), getDescID('week6PixelPerfect'), 'week6PixelPerfect'));

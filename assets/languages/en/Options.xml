@@ -68,6 +68,9 @@
 		<str id="framerate-name">Framerate</str>
 		<str id="framerate-desc">Pretty self explanatory, isn't it?</str>
 
+		<str id="vsync-name">VSync</str>
+		<str id="vsync-desc">If checked, enables VSync, fixing screen tearing at the cost of capping the framerate to your monitor's refresh rate.</str>
+
 		<str id="flashingMenu-name">Flashing Menu</str>
 		<str id="flashingMenu-desc">If unchecked, will disable menu flashing when you select an option in the Main Menu, and other flashes will be slower.</str>
 
