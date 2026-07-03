@@ -12,9 +12,9 @@ class FunkinGame extends FlxGame {
 		skipNextTickUpdate = true;
 	}
 
-	public override function onEnterFrame(t) {
+	public override function __enterFrame(t:Float) {
 		if (skipNextTickUpdate != (skipNextTickUpdate = false))
 			_total = ticks = getTicks();
-		super.onEnterFrame(t);
+		super.__enterFrame(t);
 	}
 }

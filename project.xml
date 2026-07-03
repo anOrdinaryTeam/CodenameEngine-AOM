@@ -149,6 +149,7 @@
 	<set name="BUILD_DIR" value="export/debug-32bit" if="debug 32bit" />
 	<set name="BUILD_DIR" value="export/release-32bit" if="32bit" unless="debug" />
 	<set name="BUILD_DIR" value="latest/" if="beta" />
+	<haxedef name="HXVLC_EXPORT_DIR" value="${BUILD_DIR}" if="hxvlc" />
 
 	<source name="source" />
 
