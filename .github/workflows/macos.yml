@@ -8,7 +8,7 @@ jobs:
   build:
     name: Mac OS Build
     permissions: write-all
-    runs-on: macos-14
+    runs-on: macos-26
     steps:
       - name: Pulling the new commit
         uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
           haxe -cp commandline -D analyzer-optimize --run Main setup -s
       - name: Building the game
         run: |
-          arch -x86_64 haxelib run lime build mac
+          haxelib run lime build mac
       - name: Tar files
         run: tar -zcvf CodenameEngine.tar.gz -C export/release/macos/bin .
       - name: Uploading artifact (executable)
@@ -80,7 +80,7 @@ jobs:
   debug_build:
     name: Mac OS Debug Build
     permissions: write-all
-    runs-on: macos-14
+    runs-on: macos-26
     needs: build # since its low priority, it'll run after, so actions will concentrate first on normal builds
     steps:
       - name: Pulling the new commit
@@ -105,7 +105,7 @@ jobs:
           haxe -cp commandline -D analyzer-optimize --run Main setup -s
       - name: Building the game
         run: |
-          arch -x86_64 haxelib run lime build mac -debug
+          haxelib run lime build mac -debug
       - name: Tar files
         run: tar -zcvf CodenameEngine.tar.gz -C export/debug/macos/bin .
       - name: Uploading artifact (entire build)
