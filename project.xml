@@ -50,7 +50,7 @@
 	<!-- _________________________________ Engine Settings _______________________________ -->
 
 	<!-- Comment this out to disable updates !-->
-	<define name="UPDATE_CHECKING" unless="web || hl || neko || debug"/>
+	<!-- <define name="UPDATE_CHECKING" unless="web || hl || neko || debug"/> -->
 
 	<!-- Comment this out to disable Discord RPC !-->
 	<section if="cpp">
@@ -180,7 +180,7 @@
 	<haxedef name="analyzer-optimize" unless="debug" />
 
 	<haxedef name="VIDEO_CUTSCENES" if="VIDEO_CUTSCENES" />
-	<haxedef name="UPDATE_CHECKING" if="UPDATE_CHECKING" />
+	<!-- <haxedef name="UPDATE_CHECKING" if="UPDATE_CHECKING" /> -->
 	<haxedef name="DISCORD_RPC" if="DISCORD_RPC" />
 	<haxedef name="SHOW_BUILD_ON_FPS" if="SHOW_BUILD_ON_FPS" />
 	<haxedef name="SOFTCODED_CLASSES" if="SOFTCODED_CLASSES" />
