@@ -21,6 +21,7 @@
 		<git name="away3d" url="https://github.com/CodenameCrew/away3d" />
 		<!-- <lib name="dox" /> -->
 		<lib name="markdown" />
+		<lib name="format" />
 		<lib name="hxcpp-debug-server" />
 		<lib name="nape-haxe4" />
 		<git name="hxcpp" url="https://github.com/ShadowEngineTeam/hxcpp" />
