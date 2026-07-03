@@ -721,10 +721,12 @@ class Charter extends UIState {
 	public function updateWaveforms() {
 		var wavesToGenerate:Array<{name:String, sound:FlxSound}> = getWavesToGenerate();
 
+		if (waveformHandler == null) waveformHandler = new CharterWaveformHandler();
+
 		var oldWaveformList:Array<String> = waveformHandler.waveformList;
 		var newWaveformList:Array<String> = [for (data in wavesToGenerate) data.name];
 
-		if (waveformHandler == null ? true : waveformHandler.ampsNeeded != __endStep*40) {
+		if (waveformHandler.ampsNeeded != __endStep*40) {
 			waveformHandler.clearWaveforms();
 			waveformHandler.ampsNeeded = __endStep * 40;
 
