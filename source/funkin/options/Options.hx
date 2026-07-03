@@ -229,12 +229,13 @@ class Options
 	public static function applySettings() {
 		applyKeybinds();
 		applyQuality();
-		applyVSync();
 
 		FlxG.sound.defaultMusicGroup.volume = volumeMusic;
 		FlxG.autoPause = autoPause;
 		if (FlxG.updateFramerate < framerate) FlxG.drawFramerate = FlxG.updateFramerate = framerate;
 		else FlxG.updateFramerate = FlxG.drawFramerate = framerate;
+
+		applyVSync();
 	}
 
 	public static function applyVSync() {

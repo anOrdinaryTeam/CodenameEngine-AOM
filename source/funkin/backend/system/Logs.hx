@@ -1,5 +1,8 @@
 package funkin.backend.system;
 
+#if (sys && !mobile)
+import sys.thread.Mutex;
+#end
 import flixel.system.debug.log.LogStyle;
 import flixel.system.frontEnds.LogFrontEnd;
 import funkin.backend.utils.NativeAPI.ConsoleColor;
@@ -7,7 +10,9 @@ import funkin.backend.utils.NativeAPI;
 import haxe.Log;
 
 final class Logs {
-	private static var __showing:Bool = false;
+	#if (sys && !mobile)
+	private static var __mutex:Mutex = new Mutex();
+	#end
 
 	public static var nativeTrace = Log.trace;
 	public static function init() {
@@ -106,25 +111,22 @@ final class Logs {
 
 	public static function __showInConsole(text:Array<LogText>) {
 		#if (sys && !mobile)
-		while(__showing) {
-			Sys.sleep(0.05);
-		}
-		__showing = true;
-		for(t in text) {
-			NativeAPI.setConsoleColors(t.color);
-			Sys.print(t.text);
-		}
-		NativeAPI.setConsoleColors();
-		Sys.print("\r\n");
-		__showing = false;
+		__mutex.acquire();
+		try {
+			for(t in text) {
+				NativeAPI.setConsoleColors(t.color);
+				Sys.print(t.text);
+			}
+			NativeAPI.setConsoleColors();
+			Sys.print("\r\n");
+		} catch(e:Dynamic) {}
+		__mutex.release();
 		#elseif mobile
-		while(__showing) {
-			Sys.sleep(0.05);
-		}
-		__showing = true;
-		@:privateAccess
-		Sys.print([for(t in text) t.text].join(""));
-		__showing = false;
+		__mutex.acquire();
+		try {
+			Sys.print([for(t in text) t.text].join(""));
+		} catch(e:Dynamic) {}
+		__mutex.release();
 		#else
 		@:privateAccess
 		nativeTrace([for(t in text) t.text].join(""));
