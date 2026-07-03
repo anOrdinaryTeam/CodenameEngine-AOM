@@ -134,7 +134,6 @@ class Main extends Sprite
 		FlxG.scaleMode = scaleMode = new FunkinRatioScaleMode();
 
 		Conductor.init();
-		AudioSwitchFix.init();
 		EventManager.init();
 		FlxG.signals.focusGained.add(onFocus);
 		FlxG.signals.preStateSwitch.add(onStateSwitch);
