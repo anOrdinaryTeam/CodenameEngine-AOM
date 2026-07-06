@@ -53,6 +53,11 @@ class Framerate extends Sprite {
 		x = 10;
 		y = 2;
 
+		FlxG.signals.gameResized.add(function(w, h)
+		{
+			setScale(Math.min(openfl.Lib.current.stage.stageWidth / FlxG.width, openfl.Lib.current.stage.stageHeight / FlxG.height));
+		});
+
 		if (__bitmap == null)
 			__bitmap = new BitmapData(1, 1, 0xFF000000);
 
@@ -133,5 +138,12 @@ class Framerate extends Sprite {
 			c.y = y;
 			y = c.y + c.height + 4;
 		}
+	}
+
+	public inline function setScale(?scale:Float)
+	{
+		if (scale == null)
+			scale = Math.min(FlxG.stage.window.width / FlxG.width, FlxG.stage.window.height / FlxG.height);
+		scaleX = scaleY = #if android (scale > 1 ? scale : 1) #else (scale < 1 ? scale : 1) #end;
 	}
 }

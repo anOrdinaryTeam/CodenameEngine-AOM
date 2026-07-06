@@ -121,12 +121,6 @@ final class Logs {
 			Sys.print("\r\n");
 		} catch(e:Dynamic) {}
 		__mutex.release();
-		#elseif mobile
-		__mutex.acquire();
-		try {
-			Sys.print([for(t in text) t.text].join(""));
-		} catch(e:Dynamic) {}
-		__mutex.release();
 		#else
 		@:privateAccess
 		nativeTrace([for(t in text) t.text].join(""));
