@@ -45,6 +45,9 @@ extern "C" {
 #endif
 ')
 #end
+#if (cpp && windows)
+@:cppInclude("Windows.h")
+#end
 class System
 {
 	/**
@@ -209,6 +212,15 @@ class System
 		#end
 
 		#if sys
+		#if (cpp && windows)
+		try
+		{
+			Sys.stdout().flush();
+			Sys.stderr().flush();
+		}
+		catch (e:Dynamic) {}
+		untyped __cpp__("::TerminateProcess(::GetCurrentProcess(), (unsigned int){0})", code);
+		#end
 		Sys.exit(code);
 		#elseif (js && html5)
 		if (currentApp != null && currentApp.window != null)

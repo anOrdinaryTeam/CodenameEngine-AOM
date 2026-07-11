@@ -13,6 +13,22 @@ import flixel.util.FlxColor;
  * Some functions might not have effect on some platforms.
  */
 class NativeAPI {
+	/**
+	 * Whether console colors are emitted as ANSI escape codes instead of the
+	 * legacy Windows console API. Set by `initConsole` on Windows.
+	 */
+	public static var ansiColors:Bool = #if windows false #else true #end;
+
+	/**
+	 * Fixes console output buffering and enables ANSI colors.
+	 * Called once as early as possible (from `Main.preInit`).
+	 */
+	public static function initConsole() {
+		#if windows
+		ansiColors = Windows.fixConsoleIO();
+		#end
+	}
+
 	@:dox(hide) public static function registerAudio() {
 		#if windows
 		Windows.registerAudio();
@@ -31,6 +47,7 @@ class NativeAPI {
 	public static function allocConsole() {
 		#if windows
 		Windows.allocConsole();
+		initConsole();
 		Windows.clearScreen();
 		#end
 	}
@@ -186,21 +203,33 @@ class NativeAPI {
 		if(Main.noTerminalColor) return;
 
 		#if (windows && !hl)
-		if(foregroundColor == NONE)
-			foregroundColor = LIGHTGRAY;
-		if(backgroundColor == NONE)
-			backgroundColor = BLACK;
+		if(!ansiColors) {
+			if(foregroundColor == NONE)
+				foregroundColor = LIGHTGRAY;
+			if(backgroundColor == NONE)
+				backgroundColor = BLACK;
 
-		var fg:Int = cast foregroundColor;
-		var bg:Int = cast backgroundColor;
-		Windows.setConsoleColors((bg * 16) + fg);
-		#elseif sys
-		Sys.print("\x1b[0m");
-		if(foregroundColor != NONE)
-			Sys.print("\x1b[" + Std.int(consoleColorToANSI(foregroundColor)) + "m");
-		if(backgroundColor != NONE)
-			Sys.print("\x1b[" + Std.int(consoleColorToANSI(backgroundColor) + 10) + "m");
+			var fg:Int = cast foregroundColor;
+			var bg:Int = cast backgroundColor;
+			Windows.setConsoleColors((bg * 16) + fg);
+			return;
+		}
 		#end
+		#if sys
+		Sys.print(getANSICode(foregroundColor, backgroundColor));
+		#end
+	}
+
+	/**
+	 * Returns the ANSI escape sequence for the given console colors (starting with a reset).
+	 */
+	public static function getANSICode(foregroundColor:ConsoleColor = NONE, ?backgroundColor:ConsoleColor = NONE):String {
+		var code = "\x1b[0m";
+		if(foregroundColor != NONE)
+			code += "\x1b[" + Std.int(consoleColorToANSI(foregroundColor)) + "m";
+		if(backgroundColor != NONE)
+			code += "\x1b[" + Std.int(consoleColorToANSI(backgroundColor) + 10) + "m";
+		return code;
 	}
 
 	/**

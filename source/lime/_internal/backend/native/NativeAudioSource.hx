@@ -235,10 +235,11 @@ class NativeAudioSource {
 		wordSize = audioBuffer.bitsPerSample >> 3;
 		format = getALFormat(audioBuffer.bitsPerSample, channels);
 		arrayType = wordSize == 4 ? TypedArrayType.Uint32 : (wordSize == 2 ? TypedArrayType.Uint16 : TypedArrayType.Int8);
-		standaloneBuffer = false;
 		loopTime = 0;
 		endTime = null;
 
+		// delete the standalone loop-points copy before clearing the flag,
+		// otherwise the full PCM duplicate made in updateLoopPoints() leaks
 		if (buffer != null) {
 			if (standaloneBuffer) {
 				AL.bufferData(buffer, 0, null, 0, 0);
@@ -246,6 +247,7 @@ class NativeAudioSource {
 			}
 			buffer = null;
 		}
+		standaloneBuffer = false;
 
 		if (audioBuffer.data != null) {
 			streamed = false;

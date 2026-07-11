@@ -113,12 +113,27 @@ final class Logs {
 		#if (sys && !mobile)
 		__mutex.acquire();
 		try {
-			for(t in text) {
-				NativeAPI.setConsoleColors(t.color);
-				Sys.print(t.text);
+			if (NativeAPI.ansiColors) {
+				// build the whole line and write it in one go, so colors stay in
+				// sync with the text and threads can't interleave mid-line
+				var buf = new StringBuf();
+				var colors = !Main.noTerminalColor;
+				for(t in text) {
+					if (colors) buf.add(NativeAPI.getANSICode(t.color));
+					buf.add(t.text);
+				}
+				if (colors) buf.add(NativeAPI.getANSICode());
+				buf.add("\r\n");
+				Sys.print(buf.toString());
+			} else {
+				for(t in text) {
+					NativeAPI.setConsoleColors(t.color);
+					Sys.print(t.text);
+				}
+				NativeAPI.setConsoleColors();
+				Sys.print("\r\n");
 			}
-			NativeAPI.setConsoleColors();
-			Sys.print("\r\n");
+			Sys.stdout().flush();
 		} catch(e:Dynamic) {}
 		__mutex.release();
 		#else

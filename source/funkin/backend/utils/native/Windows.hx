@@ -212,6 +212,29 @@ final class Windows {
 	}
 
 	@:functionCode('
+	setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stderr, NULL, _IONBF, 0);
+
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (hOut == INVALID_HANDLE_VALUE || hOut == NULL)
+		return false;
+
+	DWORD mode = 0;
+	if (!GetConsoleMode(hOut, &mode))
+		return true; // piped: the terminal on the other end renders ANSI itself
+
+	return SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0;
+	')
+	/**
+	 * Disables stdio buffering and enables ANSI (VT) escape sequence support.
+	 * Returns whether ANSI color codes can be used for console output.
+	 */
+	public static function fixConsoleIO():Bool
+	{
+		return false;
+	}
+
+	@:functionCode('
 		return GetFileAttributes(path);
 	')
 	public static function getFileAttributes(path:String):FileAttribute
