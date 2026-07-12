@@ -16,12 +16,15 @@
 
 		<str id="optionsTree.appearance-name">Wygląd</str>
 		<str id="optionsTree.appearance-desc">Zmień ustawienia wyglądu takie jak Migające Światła...</str>
+		<str id="optionsTree.appearance.advanced-desc">Zmień bardziej zaawansowane opcje, takie jak sprite'y tylko w VRAM, antialiasing, shadery.</str>
 
 		<str id="optionsTree.language-name">Język</str>
 		<str id="optionsTree.language-desc">Wybierz język którego używa silnik.</str>
 
 		<str id="optionsTree.miscellaneous-name">Różnorodne</str>
 		<str id="optionsTree.miscellaneous-desc">Użyj tej kategorii aby usunąć zapis lub zmienić ustawienia silnika.</str>
+		<str id="optionsTree.debug-name">Opcje debugowania</str>
+		<str id="optionsTree.debug-desc">Opcje debugowania dla trybu dewelopera.</str>
 	</group>
 
 	<group name="KeybindOptions" prefix="KeybindsOptions.">
@@ -63,6 +66,8 @@
 	<group name="AppearanceOptions" prefix="AppearanceOptions.">
 		<str id="framerate-name">Klatki</str>
 		<str id="framerate-desc">Ilość Klatek na sekundę ktore gra renderuje</str>
+		<str id="vsync-name">VSync</str>
+		<str id="vsync-desc">Jeśli włączone, włącza VSync, naprawiając rozrywanie obrazu kosztem ograniczenia liczby klatek do częstotliwości odświeżania monitora.</str>
 
 		<str id="colorHealthBar-name">Kolorowe Zdrowie</str>
 		<str id="colorHealthBar-desc">Jeśli wyłączone, Pasek zdrowia będzie tylko używał czerwonego i zielonego koloru, takiego jak z oryginalnej gry.</str>
@@ -74,6 +79,11 @@
 		<str id="flashingMenu-desc">Jeśli wyłączone, tło menu głównego nie będzie migać kolorów po wybraniu opcji. Inne migania będą znacznie wolniejsze.</str>
 
 		<group name="AppearanceOptionsAdvanced" prefix="Advanced.">
+			<str id="quality-name">Jakość</str>
+			<str id="quality-desc">Tryby jakości do wyboru: „LOW” = wyłącza wszystkie ciężkie efekty wizualne, co może wygładzić rozgrywkę, „HIGH” = włącza wszystkie efekty wizualne kosztem wydajności, „CUSTOM” = pozwala na własne opcje dostępne w zakładce Zaawansowane.</str>
+			<str id="quality-low">LOW</str>
+			<str id="quality-high">HIGH</str>
+			<str id="quality-custom">CUSTOM</str>
 			<str id="antialiasing-name">Wygładzanie</str>
 		<str id="antialiasing-desc">Jeśli wyłączone, Wygładzanie nie będzie widoczne na Sprite'ach. Może poprawić wydajność na koszt ostrzejszego, pikselowatego wyglądu Sprite'ów.</str>
 
@@ -95,6 +105,9 @@
 		<str id="ghostTapping-name">Wolne stukanie</str>
 		<str id="ghostTapping-desc">Jeśli wyłączone, próba kliknięcia struny która nie ma nuty sprawi chybienie.</str>
 
+		<str id="preciseInput-name">Precyzyjne wejście</str>
+		<str id="preciseInput-desc">Jeśli włączone, naciśnięcia klawiszy są oceniane w dokładnym momencie ich wystąpienia zamiast raz na klatkę, co czyni oceny dokładniejszymi i zachowuje kolejność naciśnięć.</str>
+
 		<str id="naughtyness-name">Niegrzeczność</str>
 		<str id="naughtyness-desc">Jeśli wyłączone, cenzuruje scenki 7 Tygodnia.</str>
 
@@ -103,6 +116,8 @@
 
 		<str id="autoPause-name">Auto Pauza</str>
 		<str id="autoPause-desc">Jeśli włączone, opuszczając okno gry zatrzyma ją.</str>
+		<str id="volumeMusic-name">Głośność muzyki</str>
+		<str id="volumeMusic-desc">Zmienia tylko głośność muzyki zamiast wszystkiego.</str>
 
 		<str id="volumeSFX-name">Głośność SFX</str>
 		<str id="volumeSFX-desc">Zmienia wyłącznie głośność efektów dzwiękowych.</str>
@@ -140,6 +155,8 @@
 
 		<str id="devMode-name">Tryb Dewelopera</str>
 		<str id="devMode-desc">Jeśli włączone, otrzymasz dostęp do funkcji deweloperskich, na przykład niektóre skróty klawiszowe, edytory, konsola, itd.</str>
+		<str id="allowConfigWarning-name">Pokaż ostrzeżenie o modpackach</str>
+		<str id="allowConfigWarning-desc">Jeśli włączone, na starcie gry pojawi się okienko z ostrzeżeniami o modpacku, takimi jak brakujące konfiguracje, niezgodne wersje i inne.</str>
 		
 		<str id="resetSaveData-name">Usuń Zapis Gry</str>
 		<str id="resetSaveData-desc">Wybierz aby usunąć zapis gry. To usunie wszystkie twoje wyniki.</str>
@@ -160,6 +177,12 @@
 		
 		<str id="editorSFX-name">Dźwięki Edytorów</str>
 		<str id="editorSFX-desc">Jeśli włączone, niektóre elementy edytorów będą grać dźwięki. (Na przykład: dźwięki pól wyboru...)</str>
+		<str id="editorCharterPrettyPrint-name">Formatowanie chartów</str>
+		<str id="editorCharterPrettyPrint-desc">Jeśli włączone, pliki zapisane z edytora chartów będą sformatowane dla łatwiejszego czytania.</str>
+		<str id="editorCharacterPrettyPrint-name">Formatowanie postaci</str>
+		<str id="editorCharacterPrettyPrint-desc">Jeśli włączone, pliki zapisane z edytora postaci będą sformatowane dla łatwiejszego czytania.</str>
+		<str id="editorStagePrettyPrint-name">Formatowanie scen</str>
+		<str id="editorStagePrettyPrint-desc">Jeśli włączone, pliki zapisane z edytora scen będą sformatowane dla łatwiejszego czytania.</str>
 
 		<str id="intensiveBlur-name">Mocniejszy Rozmaz</str>
 		<str id="intensiveBlur-desc">Jeśli włączone, gra użyje mocniejszego rozmazu, który kosztuje wydajność, ale wygląda lepiej.</str>
@@ -175,6 +198,8 @@
 
 		<str id="charterAutoSavesSeparateFolder-name">Folder Autozapisów</str>
 		<str id="charterAutoSavesSeparateFolder-desc">Jeśli włączone, Edytor będzie zapisywać pliki w osobnym folderze, zamiast nadpisywania aktualnego pliku. (song/autosaves/)</str>
+		<str id="songOffsetAffectEditors-name">Offset w edytorze chartów</str>
+		<str id="songOffsetAffectEditors-desc">Jeśli włączone, opcja przesunięcia utworu (Song Offset) będzie działać także w edytorze chartów.</str>
 	</group>
 
 </language>

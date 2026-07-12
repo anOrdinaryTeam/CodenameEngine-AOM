@@ -37,11 +37,14 @@
 		<str id="category.notes">Note</str>
 
 		<str id="category.ui">UI</str>
+		<str id="category.engine">Motore</str>
+		<str id="category.volume">Volume</str>
 		<group name="ui" prefix="ui.">
 			<str id="accept">Conferma</str>
 			<str id="back">Indietro</str>
 			<str id="reset">Resetta</str>
 			<str id="pause">Pausa</str>
+			<str id="changeMode">Cambia Modalità</str>
 		</group>
 
 		<group name="engine" prefix="engine.">
@@ -64,6 +67,8 @@
 	<group name="AppearanceOptions" prefix="AppearanceOptions.">
 		<str id="framerate-name">Framerate</str>
 		<str id="framerate-desc">Non c'è proprio bisogno di una descrizione.</str>
+		<str id="vsync-name">VSync</str>
+		<str id="vsync-desc">Se attivato, abilita il VSync, correggendo il tearing dello schermo al costo di limitare il framerate alla frequenza di aggiornamento del monitor.</str>
 
 		<str id="flashingMenu-name">Menu Flashing</str>
 		<str id="flashingMenu-desc">Se disattivato, disabiliterà le luci lampeggianti quando selezioni un'opzione nel Menu Principale, e le altre luci saranno più lente.</str>
@@ -100,6 +105,9 @@
 
 		<str id="ghostTapping-name">Ghost Tapping</str>
 		<str id="ghostTapping-desc">Se disattivato, cliccare una strum in assenza di una nota risulterà in un miss.</str>
+
+		<str id="preciseInput-name">Input Preciso</str>
+		<str id="preciseInput-desc">Se attivato, i tasti premuti vengono valutati nell'istante esatto in cui avvengono invece che una volta per frame, rendendo i giudizi più precisi e mantenendo l'ordine delle pressioni.</str>
 
 		<str id="naughtyness-name">Volgarita'</str>
 		<str id="naughtyness-desc">Se disattivato, censorerà i filmati della Week 7 o altro.</str>

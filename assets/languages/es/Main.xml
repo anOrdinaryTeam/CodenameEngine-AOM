@@ -2,7 +2,19 @@
 <language>
 	<group name="PlayState">
 		<str id="game.score">Puntaje:{0}</str>
+		<str id="game.misses">Fallos:{0}</str>
+		<str id="game.comboBreaks">Combo Breaks:{0}</str>
 		<str id="game.accuracy">Precisión:{0} - {1}</str>
+		<str id="game.combo">Combo:{0}</str>
+		<str id="game.rating.[N/A]">[N/A]</str>
+		<str id="game.rating.F">F</str>
+		<str id="game.rating.E">E</str>
+		<str id="game.rating.D">D</str>
+		<str id="game.rating.C">C</str>
+		<str id="game.rating.B">B</str>
+		<str id="game.rating.A">A</str>
+		<str id="game.rating.S">S</str>
+		<str id="game.rating.S++">S++</str>
 	</group>
 
 	<group name="StoryMenu">
@@ -12,6 +24,7 @@
 
 	<group name="Freeplay">
 		<str id="freeplay.score">MEJOR PUNTAJE:{0}</str>
+		<str id="freeplay.solo">Solo</str>
 		<str id="freeplay.opponentMode">Modo Oponente</str>
 		<str id="freeplay.coopMode">Modo Co-Op</str>
 		<str id="freeplay.coopModeSwitched">Modo Co-Op (Invertido)</str>
@@ -52,6 +65,7 @@
 
 	<group name="Mods">
 		<str id="mods.disableMods">Desactivar Mods</str>
+		<str id="mainMenu.commit">Commit: {0} ({1})</str>
 	</group>
 
 	<group name="MainMenu">

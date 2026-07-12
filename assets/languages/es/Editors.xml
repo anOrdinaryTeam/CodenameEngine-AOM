@@ -637,4 +637,94 @@
 		<str id="saveAndExitToMenu">Guardar y Volver al Menú</str>
 		<str id="cancel">Cancelar</str>
 	</group>
+
+	<group prefix="editor.">
+		<str id="notNow">Ahora No</str>
+		<str id="yes">Sí</str>
+		<str id="wiki.name">Wiki</str>
+	</group>
+	<group prefix="charterSelection.">
+		<str id="acceptVariation">Pulsa ACEPTAR para elegir una variación de la canción a editar.</str>
+		<str id="newDifficultyDesc">Pulsa ACEPTAR para crear una nueva dificultad de chart.</str>
+		<str id="newSongDesc">Pulsa ACEPTAR para crear una nueva canción.</str>
+		<str id="newVariation">Nueva Variación</str>
+		<str id="newVariationDesc">Pulsa ACEPTAR para crear una nueva variación de la canción.</str>
+	</group>
+	<group prefix="songPosInfo.">
+		<str id="bpm">BPM: {0}</str>
+	</group>
+	<group prefix="charterMetaDataScreen.">
+		<str id="variation">Variación de Canción</str>
+		<str id="bpm">BPM</str>
+		<str id="color">Color</str>
+	</group>
+	<group prefix="songCreationScreen.">
+		<str id="vslice">V-Slice</str>
+	</group>
+	<group prefix="charterStrumLine.">
+		<str id="spacing">Espaciado</str>
+		<str id="visible">¿Visible?</str>
+	</group>
+	<group prefix="charter.view.">
+		<str id="showCameraHighlights">Mostrar Resaltados de Cámara</str>
+	</group>
+	<group prefix="charter.song.">
+		<str id="addOpponentCamera">Añadir cámara en el Oponente</str>
+		<str id="addPlayerCamera">Añadir cámara en el Jugador</str>
+		<str id="inst">Instrumental</str>
+		<str id="voices">Voces</str>
+		<str id="hitsounds">Hitsounds</str>
+	</group>
+	<group prefix="charter.bookmarks.">
+		<str id="bookmarkList">Lista de Marcadores</str>
+	</group>
+	<group prefix="charter.note.">
+		<str id="noteTypesList">Lista de Tipos de Nota</str>
+	</group>
+	<group prefix="charter.playback.">
+		<str id="sectionStart">Ir al inicio de la sección</str>
+	</group>
+	<group prefix="charter.events.">
+		<str id="hscriptCall">Llamada HScript</str>
+	</group>
+	<group prefix="charter.strumLine.">
+		<str id="waveforms">Formas de Onda</str>
+		<str id="hitsounds">Hitsounds</str>
+		<str id="vocals">Voces</str>
+	</group>
+	<group prefix="characterEditor.characterAnim.">
+		<str id="fps">FPS</str>
+		<str id="looping">¿Bucle?</str>
+		<str id="label">Etiqueta</str>
+	</group>
+	<group prefix="characterCreationScreen.warnings.">
+		<str id="char-exists-title">Creando Personaje: ¡Error!</str>
+		<str id="char-exists-body">El personaje que intentas crear ya existe; si quieres sobrescribirlo, ¡elimínalo primero!</str>
+	</group>
+	<group prefix="editor.alphabet.selection.">
+		<str id="newTypefaceDesc">Pulsa ACEPTAR para crear una nueva tipografía.</str>
+	</group>
+	<group prefix="editor.alphabet.glyph.">
+		<str id="deleteCurGlyph">Eliminar Glifo Actual</str>
+	</group>
+	<group prefix="stageEditor.">
+		<str id="topBar.editor">Editor</str>
+	</group>
+	<group prefix="stageCreationScreen.warnings.">
+		<str id="stage-exists-title">Creando Escenario: ¡Error!</str>
+		<str id="stage-exists-body">El escenario que intentas crear ya existe; si quieres sobrescribirlo, ¡elimínalo primero!</str>
+	</group>
+	<group prefix="stageElementEditScreen.">
+		<str id="zoomFactor">Factor de Zoom</str>
+		<str id="antialiasing">Antialiasing</str>
+	</group>
+	<group prefix="stageSprites.">
+		<str id="sprite">Sprite</str>
+	</group>
+	<group prefix="modConfigWarning.">
+		<str id="warningTitle">¡Falta la configuración de la carpeta del mod!</str>
+		<str id="warningDesc">¡A tu mod le falta un archivo de configuración!\n\n¿Quieres generar uno automáticamente?\n\n(PD: Si este no es tu mod, desactiva el Modo Desarrollador para que este aviso no vuelva a aparecer.)</str>
+		<str id="createdTitle">¡Configuración del mod creada!</str>
+		<str id="createdDesc">¡Tu archivo de configuración del mod ha sido creado en {0}!</str>
+	</group>
 </language>

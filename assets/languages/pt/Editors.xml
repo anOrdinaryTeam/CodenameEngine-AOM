@@ -53,7 +53,7 @@
 			<str id="newSong">Nova Canção</str>
 			<str id="newSongDesc">Carregue em ACEITAR para criar uma canção nova.</str>
 			<str id="newVariation">Nova Variação</str>
-			<str id="newSongDesc">Carregue em ACEITAR para criar uma variação nova.</str>
+			<str id="newVariationDesc">Carregue em ACEITAR para criar uma variação nova.</str>
 		</group>
 
 		<group name="ChartCreationScreen" prefix="chartCreation.">
@@ -583,7 +583,7 @@
 			</group>
 		</group>
 
-		<group name="StageInfoScreen" prefix="stageInfoScreen">
+		<group name="StageInfoScreen" prefix="stageInfoScreen.">
 			<str id="win-title">A Editar Info. do Cenário: "{0}"</str>
 			<str id="title">Info. do Cenário</str>
 			<str id="stageName">Nome do Cenário</str>
@@ -683,5 +683,29 @@
 
 		<str id="createdTitle">Config. de mod criada!</str>
 		<str id="createdDesc">As configurações do seu mod foram criadas em {0}!</str>
+	</group>
+
+	<!-- Auto-added missing translations -->
+	<group prefix="charter.view.">
+		<str id="showCameraHighlights">Mostrar Destaques da Câmera</str>
+	</group>
+	<group prefix="charter.song.">
+		<str id="inst">Instrumental</str>
+		<str id="voices">Vozes</str>
+		<str id="hitsounds">Hitsounds</str>
+	</group>
+	<group prefix="charter.bookmarks.">
+		<str id="bookmarkList">Lista de Marcadores</str>
+	</group>
+	<group prefix="charter.note.">
+		<str id="noteTypesList">Lista de Tipos de Nota</str>
+	</group>
+	<group prefix="charter.strumLine.">
+		<str id="waveforms">Formas de Onda</str>
+		<str id="vocals">Vozes</str>
+	</group>
+	<group prefix="characterEditor.characterAnim.">
+		<str id="looping">Em Loop?</str>
+		<str id="label">Rótulo</str>
 	</group>
 </language>

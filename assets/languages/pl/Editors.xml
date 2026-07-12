@@ -665,4 +665,54 @@
 		<str id="createdTitle">Utworzono konfigurację modu!</str>
 		<str id="createdDesc">Twój plik konfiguracyjny modu został utworzony w {0}!</str>
 	</group>
+
+	<group prefix="charterSelection.">
+		<str id="acceptVariation">Naciśnij AKCEPTUJ, aby wybrać wariację utworu do edycji.</str>
+		<str id="newDifficultyDesc">Naciśnij AKCEPTUJ, aby stworzyć nową trudność chartu.</str>
+		<str id="newSongDesc">Naciśnij AKCEPTUJ, aby stworzyć nowy utwór.</str>
+		<str id="newVariation">Nowa Wariacja</str>
+		<str id="newVariationDesc">Naciśnij AKCEPTUJ, aby stworzyć nową wariację utworu.</str>
+	</group>
+	<group prefix="charterMetaDataScreen.">
+		<str id="variation">Wariacja Utworu</str>
+	</group>
+	<group prefix="charter.view.">
+		<str id="showCameraHighlights">Pokaż Podświetlenia Kamery</str>
+	</group>
+	<group prefix="charter.song.">
+		<str id="inst">Instrumental</str>
+		<str id="voices">Wokale</str>
+		<str id="hitsounds">Hitsounds</str>
+	</group>
+	<group prefix="charter.bookmarks.">
+		<str id="bookmarkList">Lista Zakładek</str>
+	</group>
+	<group prefix="charter.note.">
+		<str id="noteTypesList">Lista Typów Nut</str>
+	</group>
+	<group prefix="charter.strumLine.">
+		<str id="waveforms">Kształty Fali</str>
+		<str id="vocals">Wokale</str>
+	</group>
+	<group prefix="characterEditor.characterAnim.">
+		<str id="looping">Zapętlanie?</str>
+		<str id="label">Etykieta</str>
+	</group>
+	<group prefix="characterCreationScreen.warnings.">
+		<str id="char-exists-title">Tworzenie Postaci: Błąd!</str>
+		<str id="char-exists-body">Postać, którą próbujesz stworzyć, już istnieje; jeśli chcesz ją nadpisać, najpierw ją usuń!</str>
+	</group>
+	<group prefix="editor.alphabet.selection.">
+		<str id="newTypefaceDesc">Naciśnij AKCEPTUJ, aby stworzyć nowy krój pisma.</str>
+	</group>
+	<group prefix="editor.alphabet.glyph.">
+		<str id="deleteCurGlyph">Usuń Bieżący Glif</str>
+	</group>
+	<group prefix="stageEditor.view.">
+		<str id="zoomReset">Resetuj Zoom</str>
+	</group>
+	<group prefix="stageCreationScreen.warnings.">
+		<str id="stage-exists-title">Tworzenie Sceny: Błąd!</str>
+		<str id="stage-exists-body">Scena, którą próbujesz stworzyć, już istnieje; jeśli chcesz ją nadpisać, najpierw ją usuń!</str>
+	</group>
 </language>

@@ -650,4 +650,178 @@
 		<str id="saveAndExitToMenu">Salva ed Esci nel menù</str>
 		<str id="cancel">Annulla</str>
 	</group>
+
+	<group prefix="editor.">
+		<str id="notNow">Non Ora</str>
+		<str id="yes">Sì</str>
+		<str id="uiDebug.name">Stato Debug UI</str>
+	</group>
+	<group prefix="charterSelection.">
+		<str id="acceptVariation">Premi CONFERMA per scegliere una variazione della canzone da modificare.</str>
+		<str id="newDifficultyDesc">Premi CONFERMA per creare una nuova difficoltà.</str>
+		<str id="newSongDesc">Premi CONFERMA per creare una nuova canzone.</str>
+		<str id="newVariation">Nuova Variazione</str>
+		<str id="newVariationDesc">Premi CONFERMA per creare una nuova variazione della canzone.</str>
+	</group>
+	<group prefix="chartCreation.warnings.">
+		<str id="song-exists-title">Creazione Canzone: Errore!</str>
+		<str id="song-exists-body">La canzone che stai cercando di creare esiste già; se vuoi sovrascriverla, elimina prima la canzone!</str>
+		<str id="chart-exists-title">Creazione Chart: Errore!</str>
+		<str id="chart-exists-body">La chart che stai cercando di creare esiste già; se vuoi sovrascriverla, elimina prima la chart!</str>
+	</group>
+	<group prefix="charterMetaDataScreen.">
+		<str id="variation">Variazione Canzone</str>
+	</group>
+	<group prefix="charter.view.">
+		<str id="showCameraHighlights">Mostra Evidenziazioni Camera</str>
+	</group>
+	<group prefix="charter.song.">
+		<str id="addOpponentCamera">Aggiungi camera sull'Avversario</str>
+		<str id="addPlayerCamera">Aggiungi camera sul Giocatore</str>
+		<str id="inst">Strumentale</str>
+		<str id="voices">Voci</str>
+		<str id="hitsounds">Hitsounds</str>
+	</group>
+	<group prefix="charter.bookmarks.">
+		<str id="bookmarkList">Lista Segnalibri</str>
+	</group>
+	<group prefix="charter.note.">
+		<str id="noteTypesList">Lista Tipi di Nota</str>
+	</group>
+	<group prefix="charter.strumLine.">
+		<str id="waveforms">Forme d'Onda</str>
+		<str id="vocals">Voci</str>
+	</group>
+	<group prefix="characterEditor.characterAnim.">
+		<str id="looping">In Loop?</str>
+		<str id="label">Etichetta</str>
+	</group>
+	<group prefix="characterCreationScreen.warnings.">
+		<str id="char-exists-title">Creazione Personaggio: Errore!</str>
+		<str id="char-exists-body">Il personaggio che stai cercando di creare esiste già; se vuoi sovrascriverlo, elimina prima il personaggio!</str>
+	</group>
+	<group prefix="editor.alphabet.selection.">
+		<str id="newTypefaceDesc">Premi CONFERMA per creare un nuovo carattere.</str>
+	</group>
+	<group prefix="editor.alphabet.glyph.">
+		<str id="deleteCurGlyph">Elimina Glifo Corrente</str>
+	</group>
+	<group prefix="stageSelection.">
+		<str id="desc">Seleziona uno stage da modificare. Gli stage solo-HSCRIPT non sono supportati.</str>
+		<str id="acceptStage">Premi CONFERMA per modificare questo stage.</str>
+		<str id="newStage">Nuovo Stage</str>
+		<str id="acceptNewStage">Premi CONFERMA per creare un nuovo stage.</str>
+	</group>
+	<group prefix="stageEditor.">
+		<str id="topBar.file">File</str>
+		<str id="topBar.edit">Modifica</str>
+		<str id="topBar.select">Selezione</str>
+		<str id="topBar.view">Visualizza</str>
+		<str id="topBar.editor">Editor</str>
+	</group>
+	<group prefix="stageEditor.file.">
+		<str id="save">Salva</str>
+		<str id="saveAs">Salva con nome...</str>
+		<str id="exit">Esci</str>
+	</group>
+	<group prefix="stageEditor.edit.">
+		<str id="undo">Annulla</str>
+		<str id="redo">Ripeti</str>
+		<str id="editStageInfo">Modifica Info Stage</str>
+	</group>
+	<group prefix="stageEditor.select.">
+		<str id="all">Seleziona Tutto</str>
+		<str id="deselect">Deseleziona</str>
+		<str id="inverse">Inverti Selezione</str>
+	</group>
+	<group prefix="stageEditor.view.">
+		<str id="zoomIn">Ingrandisci</str>
+		<str id="zoomOut">Rimpicciolisci</str>
+		<str id="zoomReset">Reimposta Zoom</str>
+		<str id="focusDad">Metti a fuoco Dad</str>
+		<str id="focusGF">Metti a fuoco GF</str>
+		<str id="focusBF">Metti a fuoco BF</str>
+	</group>
+	<group prefix="stageEditor.editor.">
+		<str id="showCharacters">Mostra Personaggi</str>
+	</group>
+	<group prefix="stageEditor.stageSpriteScreen.">
+		<str id="win-title">Modifica sprite dello stage</str>
+		<str id="stageImageFile">File Immagine Stage $* Richiesto$</str>
+	</group>
+	<group prefix="stageCreationScreen.">
+		<str id="win-title">Creazione Nuovo Stage</str>
+		<str id="title">Info Stage</str>
+		<str id="stageName">Nome Stage</str>
+		<str id="stagePath">Percorso Stage</str>
+	</group>
+	<group prefix="stageCreationScreen.warnings.">
+		<str id="stage-exists-title">Creazione Stage: Errore!</str>
+		<str id="stage-exists-body">Lo stage che stai cercando di creare esiste già; se vuoi sovrascriverlo, elimina prima lo stage!</str>
+	</group>
+	<group prefix="stageInfoScreen.">
+		<str id="win-title">Modifica Informazioni Stage "{0}"</str>
+		<str id="title">Informazioni Stage</str>
+		<str id="stageName">Nome Stage</str>
+		<str id="spritePath">Percorso Sprite\n(Richiede Aggiornamento)</str>
+		<str id="startCamPos">Posizione Iniziale Camera (X, Y)</str>
+		<str id="zoom">Zoom</str>
+	</group>
+	<group prefix="stageElementEditScreen.">
+		<str id="win-character-title">Modifica Personaggio "{0}"</str>
+		<str id="win-sprite-title">Modifica Sprite "{0}"</str>
+		<str id="win-title">Modifica XML &lt;{0} /&gt;</str>
+		<str id="character-title">Dati Personaggio</str>
+		<str id="sprite-title">Dati Sprite</str>
+		<str id="title">Dati XML</str>
+		<str id="elementName">Nome Elemento</str>
+		<str id="nameID">Identificatore Nome</str>
+		<str id="imageFile">File Immagine (WIP: richiede ricarica)\nIn (${stage.spritesParentFolder})</str>
+		<str id="scroll">Scroll {0}</str>
+		<str id="scale">Scala {0}</str>
+		<str id="camera">Camera {0}</str>
+		<str id="spacing">Spaziatura (X, Y)</str>
+		<str id="skew">Inclinazione {0}</str>
+		<str id="alpha">Alpha</str>
+		<str id="angle">Angolo</str>
+		<str id="zoomFactor">Fattore di Zoom</str>
+		<str id="positionName">Nome Posizione</str>
+		<str id="flipX">Ribalta X</str>
+		<str id="antialiasing">Antialiasing</str>
+		<str id="highMemory">Memoria Alta</str>
+		<str id="lowMemory">Memoria Bassa</str>
+		<str id="attributes">Attributi</str>
+		<str id="transformPreview">Anteprima Trasformazione:</str>
+		<str id="animType">Tipo Animazione</str>
+		<str id="tipCustomProperties">Suggerimento: per accedere alle proprietà personalizzate,\ntieni premuto Shift mentre clicchi modifica</str>
+	</group>
+	<group prefix="stageElementEditScreen.animType.">
+		<str id="none">NONE</str>
+		<str id="beat">BEAT</str>
+		<str id="loop">LOOP</str>
+	</group>
+	<group prefix="stageXMLEditScreen.">
+		<str id="win-title">Modifica XML di {0}</str>
+		<str id="title">Dati Xml</str>
+		<str id="attributes">Attributi</str>
+	</group>
+	<str id="stageCharacters.requiredPosition">Questa posizione del personaggio è richiesta negli stage!</str>
+	<str id="stageCharacters.noDeleteGirlfriend">Non puoi eliminare Girlfriend</str>
+	<group prefix="stageElement.">
+		<str id="scale">Scala: {0}, {1}</str>
+		<str id="scroll">Scroll: {0}, {1}</str>
+	</group>
+	<group prefix="stageSprites.">
+		<str id="win-title">Sprite dello Stage</str>
+		<str id="sprite">Sprite</str>
+		<str id="box">Box</str>
+		<str id="character">Personaggio</str>
+		<str id="warnings.not-implemented">La creazione di un box non è ancora implementata!</str>
+	</group>
+	<group prefix="modConfigWarning.">
+		<str id="warningTitle">Configurazione della cartella del mod mancante!</str>
+		<str id="warningDesc">Al tuo mod manca un file di configurazione!\n\nVuoi generarne uno automaticamente?\n\n(PS: Se questo non è il tuo mod, disabilita la Modalità Sviluppatore per non far riapparire questo popup.)</str>
+		<str id="createdTitle">Configurazione del mod creata!</str>
+		<str id="createdDesc">Il file di configurazione del tuo mod è stato creato in {0}!</str>
+	</group>
 </language>

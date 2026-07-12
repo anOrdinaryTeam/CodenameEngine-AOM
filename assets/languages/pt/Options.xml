@@ -67,6 +67,8 @@
 	<group name="AppearanceOptions" prefix="AppearanceOptions.">
 		<str id="framerate-name">FPS</str>
 		<str id="framerate-desc">Quadros Por Segundo, se quiser. Explica-se a sí próprio, certo?</str>
+		<str id="vsync-name">VSync</str>
+		<str id="vsync-desc">Se marcado, ativa o VSync, corrigindo o tearing da tela ao custo de limitar a taxa de quadros à taxa de atualização do seu monitor.</str>
 
 		<str id="flashingMenu-name">Luzes Intermitentes</str>
 		<str id="flashingMenu-desc">Se desmarcado, irá desativar as luzes intermitentes quando seleciona algo no Menu Principal, e outras serão abrandadas.</str>
@@ -104,6 +106,9 @@
 
 		<str id="ghostTapping-name">Toques Fantasma</str>
 		<str id="ghostTapping-desc">Se desmarcado, bater em teclas que não tem uma nota conta como erro.</str>
+
+		<str id="preciseInput-name">Entrada Precisa</str>
+		<str id="preciseInput-desc">Se marcado, as teclas são avaliadas no momento exato em que acontecem em vez de uma vez por frame, tornando as avaliações mais precisas e preservando a ordem das teclas.</str>
 
 		<str id="naughtyness-name">Indecência</str>
 		<str id="naughtyness-desc">Se desmarcado, irá censurar as cenas da Semana 7, ou mais.</str>
