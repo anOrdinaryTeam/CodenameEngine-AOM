@@ -349,17 +349,54 @@ final class Conductor
 
 	private static var elapsed:Float;
 
+	@:dox(hide) public static var __lastUpdateStamp:Float = 0;
+
+	public static function getEventSongPosition(eventStamp:Float = 0):Float {
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing) return songPosition;
+		var now:Float = eventStamp > 0 ? eventStamp : lime.system.System.getTimer();
+		var delta:Float = (now - __lastUpdateStamp) * FlxG.sound.music.pitch;
+		if (delta < 0 || delta > 50) delta = 0; // stale stamp guard (paused conductor, lag spike)
+		return songPosition + delta;
+	}
+
 	public static function init() {
 		FlxG.signals.preUpdate.add(update);
 		FlxG.signals.preStateCreate.add(onStateSwitch);
 		reset();
 	}
 
+	private static var __lastRawTime:Float = -1;
+
 	private static function __updateSongPos(elapsed:Float) {
-		if (FlxG.sound.music != null) { // CNE FlxSound is Interpolated.
-			lastSongPos = FlxG.sound.music.time - songOffset;
-			if (FlxG.sound.music.playing) songPosition = FlxG.sound.music.time;
+		if (FlxG.sound.music == null) return;
+		lastSongPos = FlxG.sound.music.time - songOffset;
+		if (!FlxG.sound.music.playing) {
+			__lastRawTime = -1;
+			return;
 		}
+
+		var raw:Float = FlxG.sound.music.time;
+
+		if (__lastRawTime < 0) { // just started / resumed
+			songPosition = raw;
+			__lastRawTime = raw;
+			return;
+		}
+
+		// real ms since last update (immune to FlxG.timeScale), scaled by pitch
+		var realDt:Float = __lastUpdateStamp > 0 ? (lime.system.System.getTimer() - __lastUpdateStamp) : elapsed * 1000;
+		if (realDt < 0 || realDt > 100) realDt = elapsed * 1000;
+		var songDt:Float = realDt * FlxG.sound.music.pitch;
+
+		// read the raw backing field, the getter applies the user's song offset,
+		// which must not leak into the stored position
+		var cur:Float = @:bypassAccessor songPosition;
+		var smooth:Float = cur + songDt;
+		if (raw != __lastRawTime) {
+			if (Math.abs(raw - smooth) >= Math.max(songDt, 5)) smooth = raw;
+			__lastRawTime = raw;
+		}
+		songPosition = smooth;
 	}
 
 	private static function onStateSwitch(newState:FlxState) {
@@ -381,6 +418,7 @@ final class Conductor
 			}
 		}
 		__updateSongPos(FlxG.elapsed);
+		__lastUpdateStamp = lime.system.System.getTimer();
 
 		var oldStep = curStep, oldBeat = curBeat, oldMeasure = curMeasure, oldChangeIndex = curChangeIndex;
 

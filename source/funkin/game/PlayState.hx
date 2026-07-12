@@ -1926,14 +1926,16 @@ class PlayState extends MusicBeatState
 	/**
 	 * Hits a note
 	 * @param note Note to hit.
+	 * @param hitTime Optional song position the hit input fired at (event-driven
+	 * input passes this so ratings aren't quantized to frame boundaries).
 	 */
-	public function goodNoteHit(strumLine:StrumLine, note:Note):Void
+	public function goodNoteHit(strumLine:StrumLine, note:Note, ?hitTime:Float):Void
 	{
 		if(note == null || note.wasGoodHit) return;
 
 		note.wasGoodHit = true;
 
-		var noteDiff = Math.abs(Conductor.songPosition - note.strumTime), rating:Rating;
+		var noteDiff = Math.abs((hitTime != null ? hitTime : Conductor.songPosition) - note.strumTime), rating:Rating;
 		if (!Flags.USE_LEGACY_TIMING) rating = ratingManager.judgeNote(noteDiff);
 		else {
 			(rating = _legacyRating).splash = false;

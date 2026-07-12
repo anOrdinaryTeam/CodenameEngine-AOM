@@ -256,11 +256,49 @@ class StrumLine extends FlxTypedGroup<Strum> {
 	var __justReleased:Array<Bool> = [];
 	var __notePerStrum:Array<Note> = [];
 
+	/**
+	 * Event-driven keyboard input (see `PreciseInputHandler`). Created
+	 * automatically for non-CPU strumlines when `Options.preciseInput` is on.
+	 * Taps judged here are stamped with the song position at key-event time.
+	**/
+	public var preciseInput:PreciseInputHandler;
+	var __preciseHandled:Array<Bool> = [];
+
 	function __inputProcessPressed(note:Note) {
 		if (__pressed[note.strumID] && note.isSustainNote && note.strumTime < __updateNote_songPos && !note.wasGoodHit && note.sustainParent.wasGoodHit) {
 			PlayState.instance.goodNoteHit(this, note);
 		}
 	}
+	var __findTap_dir:Int;
+	var __findTap_pos:Float;
+	var __findTap_note:Note;
+
+	function __inputProcessPrecise(note:Note) {
+		if (note.strumID != __findTap_dir || note.isSustainNote || note.wasGoodHit || !note.canBeHit) return;
+
+		var cur = __findTap_note;
+		if (cur == null) {
+			__findTap_note = note;
+			return;
+		}
+		if (!note.avoid && cur.avoid) {
+			__findTap_note = note;
+			return;
+		}
+		if (note.avoid == cur.avoid && Math.abs(note.strumTime - __findTap_pos) < Math.abs(cur.strumTime - __findTap_pos))
+			__findTap_note = note;
+	}
+
+	function __findTappableNote(dir:Int, songPos:Float):Note {
+		__findTap_dir = dir;
+		__findTap_pos = songPos;
+		__findTap_note = null;
+		notes.forEachAlive(__inputProcessPrecise);
+		var n = __findTap_note;
+		__findTap_note = null;
+		return n;
+	}
+
 	function __inputProcessJustPressed(note:Note) {
 		var strumID = note.strumID;
 		if (!__justPressed[strumID] || note.isSustainNote || note.wasGoodHit || !note.canBeHit) return;
@@ -312,13 +350,44 @@ class StrumLine extends FlxTypedGroup<Strum> {
 			__justReleased[i] = members[i].__getJustReleased(this);
 		}
 
+		if (funkin.options.Options.preciseInput) {
+			if (preciseInput == null && controls != null)
+				preciseInput = new PreciseInputHandler(controls, membersLength);
+		} else if (preciseInput != null) {
+			preciseInput.dispose();
+			preciseInput = null;
+		}
+
 		var event = EventManager.get(InputSystemEvent).recycle(__pressed, __justPressed, __justReleased, this, id);
 		if (PlayState.instance != null) PlayState.instance.gameAndCharsEvent("onInputUpdate", event);
-		if (event.cancelled) return;
+		if (event.cancelled) {
+			if (preciseInput != null) preciseInput.flush(); // drop, don't let stale events pile up
+			return;
+		}
 
 		__pressed = CoolUtil.getDefault(event.pressed, []);
 		__justPressed = CoolUtil.getDefault(event.justPressed, []);
 		__justReleased = CoolUtil.getDefault(event.justReleased, []);
+
+		// Event-driven taps: judge each key event at the song position it fired
+		// at, in the order the events arrived. Directions handled here are
+		// masked from the legacy per-frame path below (which remains for
+		// gamepads and scripts overriding the input arrays).
+		if (__preciseHandled.length != membersLength) __preciseHandled.resize(membersLength);
+		for (i in 0...membersLength) __preciseHandled[i] = false;
+
+		if (preciseInput != null) {
+			for (ev in preciseInput.flush()) {
+				if (!ev.press || ev.dir >= membersLength) continue;
+				__preciseHandled[ev.dir] = true;
+
+				var note = __findTappableNote(ev.dir, ev.songPos);
+				if (note != null)
+					PlayState.instance.goodNoteHit(this, note, ev.songPos);
+				else if (!ghostTapping)
+					PlayState.instance.noteMiss(this, null, ev.dir, ID);
+			}
+		}
 
 		if (__pressed.contains(true)) {
 			if (__justPressed.contains(true)) {
@@ -327,6 +396,10 @@ class StrumLine extends FlxTypedGroup<Strum> {
 				for (k => pr in __justPressed)
 				{
 					var note = __notePerStrum[k];
+					if (__preciseHandled[k]) {
+						__notePerStrum[k] = null;
+						continue;
+					}
 
 					if (note != null) {
 						PlayState.instance.goodNoteHit(this, note);
@@ -372,6 +445,10 @@ class StrumLine extends FlxTypedGroup<Strum> {
 		super.destroy();
 		if(startingPos != null)
 			startingPos.put();
+		if (preciseInput != null) {
+			preciseInput.dispose();
+			preciseInput = null;
+		}
 		notes = FlxDestroyUtil.destroy(notes);
 	}
 

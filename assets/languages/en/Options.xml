@@ -108,6 +108,9 @@
 		<str id="ghostTapping-name">Ghost Tapping</str>
 		<str id="ghostTapping-desc">If unchecked, trying to hit any strum that have no note that can be hit will cause a miss.</str>
 
+		<str id="preciseInput-name">Precise Input</str>
+		<str id="preciseInput-desc">If checked, key presses are judged at the exact moment they happen instead of once per frame, making ratings more accurate and preserving press order.</str>
+
 		<str id="naughtyness-name">Naughtyness</str>
 		<str id="naughtyness-desc">If unchecked, will censor the Week 7 cutscenes or more.</str>
 
