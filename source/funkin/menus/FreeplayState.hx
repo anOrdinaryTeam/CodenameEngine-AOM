@@ -302,7 +302,7 @@ class FreeplayState extends MusicBeatState
 
 				if (Options.streamedMusic || disableAsyncLoading) {
 					if (data != null && autoplayShouldPlay) {
-						if (!Options.streamedMusic && data.isStreamable) data.buffer.load();
+						if (!Options.streamedMusic && data.isStreamable) data.load();
 
 						FlxG.sound.playMusic(data, 0);
 						Conductor.changeBPM(curSong.bpm, curSong.beatsPerMeasure, curSong.stepsPerBeat);
@@ -310,7 +310,7 @@ class FreeplayState extends MusicBeatState
 				}
 				else if (data != null) {
 					if (data.isStreamable) {
-						data.buffer.loadAsync((_) -> {
+						data.loadAsync((_) -> {
 							if (!autoplayShouldPlay) return;
 
 							FlxG.sound.playMusic(data, 0);

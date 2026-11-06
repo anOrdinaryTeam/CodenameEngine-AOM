@@ -1,6 +1,6 @@
 package funkin.backend.utils;
 
-#if lime_openal
+#if (lime_openal || lime_miniaudio)
 import sys.thread.Mutex;
 
 import lime.utils.ArrayBufferView.ArrayBufferIO;
@@ -326,6 +326,7 @@ final class AudioAnalyzer {
 	public var byteSize(default, null):Int;
 
 	var _sampleSize:Int;
+	var _isFloat:Bool = false;
 	var _mins:Array<Int> = [];
 	var _maxs:Array<Int> = [];
 	//var _decoder:FunkinAudioDecoder;
@@ -350,9 +351,14 @@ final class AudioAnalyzer {
 	}
 
 	function _check() {
-		if (sound != null && !sound.data.isDestroyed) {
+		if (sound != null && sound.data != null && !sound.data.isDestroyed) {
 			if (sound.data != data) {
-				byteSize = 1 << ((data = sound.data).bitsPerSample - 1);
+				data = sound.data;
+				#if lime_miniaudio
+				// miniaudio decodes to 32-bit float PCM, read it as 16-bit scaled samples
+				_isFloat = data.buffer != null && data.buffer.format == lime.media.miniaudio.MAFormat.F32;
+				#end
+				byteSize = _isFloat ? 0x7FFF : 1 << (data.bitsPerSample - 1);
 				_sampleSize = data.channels * (data.bitsPerSample >> 3);
 				_mins.resize(data.channels);
 				_maxs.resize(data.channels);
@@ -577,13 +583,18 @@ final class AudioAnalyzer {
 		if (endIndex > data.buffer.data.byteLength) endIndex = data.buffer.data.byteLength;
 		var buffer = data.buffer.data.buffer, byteRate = data.bitsPerSample >> 3, c = 0;
 		while (startIndex < endIndex) {
-			callback(getByte(buffer, startIndex, byteRate), c);
+			if (_isFloat) callback(Std.int(ArrayBufferIO.getFloat32(buffer, startIndex) * 0x7FFF), c);
+			else callback(getByte(buffer, startIndex, byteRate), c);
 			startIndex += byteRate;
 			if (++c == data.channels) c = 0;
 		}
 	}
 
 	function _readStream(startSample:Int, endSample:Int, callback:ReadCallback):Int @:privateAccess {
+		#if lime_miniaudio
+		// miniaudio streams decode straight into the device, there is no decoded data to read back here.
+		return startSample;
+		#else
 		final backend = sound.source.__backend;
 		if (backend.filledBuffers == 0) return startSample;
 
@@ -616,6 +627,7 @@ final class AudioAnalyzer {
 		backend.mutex.release();
 
 		return startSample;
+		#end
 	}
 
 	// TODO: Fix this and _readDecoder in the future.

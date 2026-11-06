@@ -5,12 +5,12 @@
 
 		<!-- Hxcpp & OpenFL & Lime (Required for Flixel) -->
 		<git name="hxcpp" url="https://github.com/anOrdinaryTeam/libhxcpp" />
-		<git name="openfl" url="https://github.com/anOrdinaryTeam/openfl" skipDeps="true" />
+		<git name="openfl" url="https://github.com/anOrdinaryTeam/openfl" ref="claude/keen-keller-6tozpk" skipDeps="true" />
 		<git name="lime" url="https://github.com/anOrdinaryTeam/lime" skipDeps="true" />
 
 		<!-- Flixel -->
-		<git name="flixel" url="https://github.com/anOrdinaryTeam/flixel" skipDeps="true" />
-		<git name="flixel-addons" url="https://github.com/anOrdinaryTeam/flixel-addons" skipDeps="true" />
+		<git name="flixel" url="https://github.com/anOrdinaryTeam/flixel" ref="claude/keen-keller-6tozpk" skipDeps="true" />
+		<git name="flixel-addons" url="https://github.com/anOrdinaryTeam/flixel-addons" ref="claude/keen-keller-6tozpk" skipDeps="true" />
 
 		<!-- CNE Core Libraries -->
 		<git name="flixel-animate" url="https://github.com/anOrdinaryTeam/flixel-animate" skipDeps="true" />

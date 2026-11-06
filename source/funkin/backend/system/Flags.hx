@@ -350,7 +350,7 @@ class Flags {
 	private static function loadPost() {
 		if (MOD_API_VERSION == null) MOD_API_VERSION = CURRENT_API_VERSION;
 		if (WINDOW_TITLE_USE_MOD_NAME == null) WINDOW_TITLE_USE_MOD_NAME = !overridenFlags.exists('TITLE') && overridenFlags.exists('MOD_NAME');
-		if (DEFAULT_GLSL_VERSION == null) DEFAULT_GLSL_VERSION = openfl.utils.GLSLSourceAssembler.getDefaultVersion();
+		if (DEFAULT_GLSL_VERSION == null) DEFAULT_GLSL_VERSION = #if (web || mobile) "300 es" #elseif mac "410 core" #else "330 core" #end;
 		if (PATHS_CASE_SENSITIVE_FIX == null) {
 			#if windows
 			for (l in Paths.assetsTree.libraries) {
