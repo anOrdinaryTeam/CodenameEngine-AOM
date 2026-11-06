@@ -7,8 +7,12 @@ import funkin.backend.utils.native.HiddenProcess;
 import cpp.Float64;
 import cpp.UInt64;
 #end
+#if windows
+import funkin.backend.utils.native.Windows;
+#end
 
 using StringTools;
+import funkin.backend.system.macros.StringMacro;
 
 class SystemInfo extends FramerateCategory {
 	public static var osInfo:String = "Unknown";
@@ -53,26 +57,30 @@ class SystemInfo extends FramerateCategory {
 			if (osName != "")
 				osInfo = '${osName} ${osVersion}'.trim();
 		}
-		#elseif windows
-		var windowsCurrentVersionPath = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion";
-		var buildNumber = Std.parseInt(RegistryUtil.get(HKEY_LOCAL_MACHINE, windowsCurrentVersionPath, "CurrentBuildNumber"));
-		var edition = RegistryUtil.get(HKEY_LOCAL_MACHINE, windowsCurrentVersionPath, "ProductName");
-
-		var lcuKey = "WinREVersion"; // Last Cumulative Update Key On Older Windows Versions
-		if (buildNumber >= 22000) { // Windows 11 Initial Release Build Number
-			edition = edition.replace("Windows 10", "Windows 11");
-			lcuKey = "LCUVer"; // Last Cumulative Update Key On Windows 11
-		}
-
-		var lcuVersion = RegistryUtil.get(HKEY_LOCAL_MACHINE, windowsCurrentVersionPath, lcuKey);
-
-		osInfo = edition;
-
-		if (lcuVersion != null && lcuVersion != "")
-			osInfo += ' ${lcuVersion}';
-		else if (lime.system.System.platformVersion != null && lime.system.System.platformVersion != "")
-			osInfo += ' ${lime.system.System.platformVersion}';
 		#else
+		#if windows
+		final buildNumber = Windows.getBuildNumber();
+
+		if (buildNumber >= 9200) {
+			final windowsCurrentVersionPath = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion";
+			var edition = RegistryUtil.get(HKEY_LOCAL_MACHINE, windowsCurrentVersionPath, "ProductName");
+
+			var lcuKey = "WinREVersion"; // Last Cumulative Update Key On Older Windows Versions
+			if (buildNumber >= 22000) {
+				edition = edition.replace("Windows 10", "Windows 11");
+				lcuKey = "LCUVer";
+			}
+
+			final lcuVersion = RegistryUtil.get(HKEY_LOCAL_MACHINE, windowsCurrentVersionPath, lcuKey);
+
+			osInfo = edition;
+			if (lcuVersion != null && lcuVersion != "")
+				osInfo += ' ${lcuVersion}';
+			else if (lime.system.System.platformVersion != null && lime.system.System.platformVersion != "")
+				osInfo += ' ${lime.system.System.platformVersion}';
+		}
+		else
+		#end
 		if (lime.system.System.platformLabel != null && lime.system.System.platformLabel != "" && lime.system.System.platformVersion != null && lime.system.System.platformVersion != "")
 			osInfo = '${lime.system.System.platformLabel.replace(lime.system.System.platformVersion, "").trim()} ${lime.system.System.platformVersion}';
 		else
@@ -81,7 +89,15 @@ class SystemInfo extends FramerateCategory {
 
 		try {
 			#if windows
-			cpuName = RegistryUtil.get(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", "ProcessorNameString");
+			if (buildNumber >= 9200) {
+				cpuName = RegistryUtil.get(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", "ProcessorNameString");
+			}
+			else {
+				var process = new HiddenProcess("wmic", ["cpu", "get", "name"]);
+				if (process.exitCode() != 0) throw 'Could not fetch CPU information';
+
+				cpuName = process.stdout.readAll().toString().trim().split("\n")[1].trim();
+			}
 			#elseif mac
 			var process = new HiddenProcess("sysctl -a | grep brand_string"); // Somehow this isn't able to use the args but it still works
 			if (process.exitCode() != 0) throw 'Could not fetch CPU information';
@@ -137,21 +153,32 @@ class SystemInfo extends FramerateCategory {
 	}
 
 	static function formatSysInfo() {
-		__formattedSysText = "";
-		if (osInfo != "Unknown") __formattedSysText += 'System: $osInfo';
-		if (cpuName != "Unknown") __formattedSysText += '\nCPU: $cpuName ${openfl.system.Capabilities.cpuArchitecture} ${(openfl.system.Capabilities.supports64BitProcesses ? '64-Bit' : '32-Bit')}';
+		var buf = new StringBuf();
+		if (osInfo != "Unknown") {
+			StringMacro.addLine(buf, 'System: ${osInfo}');
+		}
+		if (cpuName != "Unknown") {
+			StringMacro.addLine(buf, '\nCPU: ${cpuName} ${openfl.system.Capabilities.cpuArchitecture} ${openfl.system.Capabilities.supports64BitProcesses ? "64-Bit" : "32-Bit"}');
+		}
 		if (gpuName != cpuName || vRAM != "Unknown") {
 			var gpuNameKnown = gpuName != "Unknown" && gpuName != cpuName;
 			var vramKnown = vRAM != "Unknown";
 
-			if(gpuNameKnown || vramKnown) __formattedSysText += "\n";
+			if(gpuNameKnown || vramKnown) buf.add("\n");
 
-			if(gpuNameKnown) __formattedSysText += 'GPU: $gpuName';
-			if(gpuNameKnown && vramKnown) __formattedSysText += " | ";
-			if(vramKnown) __formattedSysText += 'VRAM: $vRAM'; // 1000 bytes of vram (apus)
+			if(gpuNameKnown) {
+				StringMacro.addLine(buf, 'GPU: ${gpuName}');
+			}
+			if(gpuNameKnown && vramKnown) buf.add(" | ");
+			if(vramKnown) {
+				StringMacro.addLine(buf, 'VRAM: ${vRAM}');
+			}
 		}
-		//if (gpuMaxSize != "Unknown") __formattedSysText += '\nMax Bitmap Size: $gpuMaxSize';
-		if (totalMem != "Unknown" && memType != "Unknown") __formattedSysText += '\nTotal MEM: $totalMem $memType';
+		//if (gpuMaxSize != "Unknown") StringMacro.addLine(buf, '\nMax Bitmap Size: ',gpuMaxSize);
+		if (totalMem != "Unknown" && memType != "Unknown") {
+			StringMacro.addLine(buf, '\nTotal MEM: ${totalMem} ${memType}');
+		}
+		__formattedSysText = buf.toString();
 	}
 
 	static function getSizeString(size:Float):String {
@@ -167,13 +194,17 @@ class SystemInfo extends FramerateCategory {
 
 	public function new() {
 		super("System Info");
+		visible = Options.fpsCounterSystem;
 	}
 
 	public override function __enterFrame(t:Float) {
-		if (alpha <= 0.05) return;
+		if (alpha <= 0.05 || !visible) return;
 
-		_text = __formattedSysText;
-		_text += '${__formattedSysText == "" ? "" : "\n"}Garbage Collector: ${MemoryUtil.disableCount > 0 ? "OFF" : "ON"} (${MemoryUtil.disableCount})';
+		var buf = new StringBuf();
+		buf.add(__formattedSysText);
+		if (__formattedSysText != '') buf.add('\n');
+		StringMacro.addLine(buf, 'Garbage Collector: ${MemoryUtil.disableCount > 0 ? "OFF" : "ON"} (${MemoryUtil.disableCount})');
+		_text = buf.toString();
 
 		this.text.text = _text;
 		super.__enterFrame(t);

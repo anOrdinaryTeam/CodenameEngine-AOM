@@ -7,9 +7,8 @@ class Config {
 		"flixel",
 
 		"funkin",
-		#if MODCHARTING_FEATURES
-		"modchart.engine",
-		"modchart.backend.standalone",
+		#if foxlite 
+		"foxlite", 
 		#end
 		#end
 	];
@@ -23,6 +22,12 @@ class Config {
 		"haxe.xml",
 		"haxe.CallStack",
 		"funkin",
+		#if IMGUI_ENABLED
+		"lime.tools.imgui",
+		#end
+		#if foxlite 
+		"foxlite" 
+		#end
 		#end
 	];
 
@@ -47,5 +52,10 @@ class Config {
 
 	public static final DISALLOW_TYPEDEFS = [
 		"haxe", // by default
+	];
+
+	@:unreflective
+	public static final IMPORT_BLACKLIST:Array<String> = [
+		
 	];
 }

@@ -10,6 +10,7 @@ import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import funkin.backend.FunkinSprite;
 import funkin.backend.scripting.DummyScript;
+import funkin.backend.scripting.EventManager;
 import funkin.backend.scripting.Script;
 import funkin.backend.scripting.ScriptPack;
 import funkin.backend.scripting.events.CancellableEvent;
@@ -46,7 +47,14 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 	public var icon:String = null;
 	public var iconColor:Null<FlxColor> = null;
 	public var gameOverCharacter:String = Character.FALLBACK_DEAD_CHARACTER;
+	public var defaultAimFPS:Float = 24;
 
+
+	/*
+		Whether to use the center or the top-left of the character as the camera origin point.
+		This is for compatibility with old texture atlas characters.
+	*/
+	public var centeredCamera:Bool = true;
 	public var cameraOffset:FlxPoint = FlxPoint.get(0, 0);
 	public var globalOffset:FlxPoint = FlxPoint.get(0, 0);
 	public var extraOffset:FlxPoint = FlxPoint.get(0, 0);
@@ -130,7 +138,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 	@:noCompletion var isDanceLeftDanceRight:Bool = false;
 
 	override function update(elapsed:Float) {
-		scripts.call("update", [elapsed]);
+		scripts.callOne("update", elapsed);
 
 		super.update(elapsed);
 
@@ -145,7 +153,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 
 		__lockAnimThisFrame = false;
 
-		scripts.call("postUpdate", [elapsed]);
+		scripts.callOne("postUpdate", elapsed);
 	}
 
 	private var danced:Bool = false;
@@ -154,7 +162,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 		if(debugMode) return;
 
 		var event = EventManager.get(DanceEvent).recycle(danced);
-		scripts.call("onDance", [event]);
+		scripts.event("onDance", event);
 		if (event.cancelled) return;
 
 		if (isDanceLeftDanceRight)
@@ -164,8 +172,9 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 	}
 
 	public function tryDance() {
-		var event = new CancellableEvent();
-		scripts.call("onTryDance", [event]);
+		var event = EventManager.get(CancellableEvent);
+		event.recycleBase();
+		scripts.event("onTryDance", event);
 		if (event.cancelled)
 			return;
 
@@ -189,18 +198,20 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 	 */
 	public var danceOnBeat:Bool = true;
 	public override function beatHit(curBeat:Int) {
-		scripts.call("beatHit", [curBeat]);
+		scripts.callOne("beatHit", curBeat);
 
 		if (skipNegativeBeats && curBeat < 0) return;
 		if (danceOnBeat && (curBeat + beatOffset) % (beatInterval * CoolUtil.maxInt(Math.floor(4 / Conductor.stepsPerBeat), 1)) == 0 && !__lockAnimThisFrame)
 			tryDance();
 	}
 
-	public override function measureHit(curMeasure:Int)
-		scripts.call("measureHit", [curMeasure]);
+	public override function measureHit(curMeasure:Int) {
+		scripts.callOne("measureHit", curMeasure);
+	}
 
-	public override function stepHit(curStep:Int)
-		scripts.call("stepHit", [curStep]);
+	public override function stepHit(curStep:Int) {
+		scripts.callOne("stepHit", curStep);
+	}
 
 	@:noCompletion var __reverseDrawProcedure:Bool = false;
 	public override function getScreenBounds(?newRect:FlxRect, ?camera:FlxCamera):FlxRect {
@@ -254,13 +265,13 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 	public var ghostDraw:Bool = false;
 	public override function draw() {
 		var e = EventManager.get(DrawEvent).recycle();
-		scripts.call("draw", [e]);
+		scripts.event("draw", e);
 
 		preDraw();
 		super.draw();
 		postDraw();
 
-		scripts.call("postDraw", [e]);
+		scripts.event("postDraw", e);
 	}
 
 	public var singAnims = ["singLEFT", "singDOWN", "singUP", "singRIGHT"];
@@ -273,7 +284,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 	public function playSingAnim(direction:Int, suffix:String = "", Context:PlayAnimContext = SING, ?Force:Null<Bool> = null, Reversed:Bool = false, Frame:Int = 0)
 	{
 		var event = EventManager.get(DirectionAnimEvent).recycle(getSingAnim(direction, suffix), direction, suffix, Context, Reversed, Frame, Force);
-		scripts.call("onPlaySingAnim", [event]);
+		scripts.event("onPlaySingAnim", event);
 		if (event.cancelled) return;
 
 		playSingAnimUnsafe(event.direction, hasAnimation(event.animName) ? event.suffix : "", event.context, event.force, event.reversed, event.frame);
@@ -281,7 +292,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 
 	public function playSingAnimUnsafe(direction:Int, suffix:String = "", Context:PlayAnimContext = SING, Force:Bool = true, Reversed:Bool = false, Frame:Int = 0) {
 		var event = EventManager.get(DirectionAnimEvent).recycle(getSingAnim(direction, suffix), direction, suffix, Context, Reversed, Frame, Force);
-		scripts.call("playSingAnimUnsafe", [event]);
+		scripts.event("playSingAnimUnsafe", event);
 		if (event.cancelled) return;
 
 		playAnim(event.animName, event.force, event.context, event.reversed, event.frame);
@@ -289,7 +300,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 
 	public override function playAnim(AnimName:String, ?Force:Bool, Context:PlayAnimContext = NONE, Reversed:Bool = false, Frame:Int = 0) {
 		var event = EventManager.get(PlayAnimEvent).recycle(AnimName, Force, Reversed, Frame, Context);
-		scripts.call("onPlayAnim", [event]);
+		scripts.event("onPlayAnim", event);
 		if (event.cancelled) return;
 
 		super.playAnim(event.animName, event.force, event.context, event.reverse, event.startingFrame);
@@ -299,15 +310,19 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 			lastHit = Conductor.songPosition;
 	}
 
-	public inline function getCameraPosition() {
-		var midpoint:FlxPoint = getMidpoint();
+	@:noCompletion public inline function __getCameraPositionInto(out:FlxPoint):FlxPoint {
+		var midpoint:FlxPoint = centeredCamera ? getMidpoint() : getPosition();
 		var event = EventManager.get(PointEvent).recycle(
 			midpoint.x + (isPlayer ? -100 : 150) + globalOffset.x + cameraOffset.x,
 			midpoint.y - 100 + globalOffset.y + cameraOffset.y);
-		scripts.call("onGetCamPos", [event]);
+		scripts.event("onGetCamPos", event);
 
 		midpoint.put();
-		return new FlxPoint(event.x, event.y);
+		return out.set(event.x, event.y);
+	}
+
+	public inline function getCameraPosition() {
+		return __getCameraPositionInto(new FlxPoint());
 	}
 
 	public override function destroy() {
@@ -365,7 +380,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 
 		xml = scripts.event("onCharacterXMLParsed", EventManager.get(CharacterXMLEvent).recycle(this, xml)).xml;
 
-		sprite = curCharacter;
+		name = sprite = curCharacter;
 		spriteAnimType = BEAT;
 		this.xml = xml; // Modders wassup :D
 
@@ -373,6 +388,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 		if (xml.x.exists("x")) globalOffset.x = Std.parseFloat(xml.x.get("x"));
 		if (xml.x.exists("y")) globalOffset.y = Std.parseFloat(xml.x.get("y"));
 		if (xml.x.exists("gameOverChar")) gameOverCharacter = xml.x.get("gameOverChar");
+		if (xml.x.exists("defFps")) defaultAimFPS = Std.parseFloat(xml.x.get("defFps"));
 		if (xml.x.exists("camx")) cameraOffset.x = Std.parseFloat(xml.x.get("camx"));
 		if (xml.x.exists("camy")) cameraOffset.y = Std.parseFloat(xml.x.get("camy"));
 		if (xml.x.exists("holdTime")) holdTime = Std.parseFloat(xml.x.get("holdTime")).getDefaultFloat(4);
@@ -386,6 +402,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 		}
 		if (xml.x.exists("antialiasing")) antialiasing = (xml.x.get("antialiasing") == "true");
 		if (xml.x.exists("applyStageMatrix")) applyStageMatrix = (xml.x.get("applyStageMatrix") == "true");
+		if (xml.x.exists("postStageMatrixApply")) postStageMatrixApply = (xml.x.get("postStageMatrixApply") == "true");
 		if (xml.x.exists("sprite")) sprite = xml.x.get("sprite");
 		if (xml.x.exists("swfMode")) animateSettings.swfMode = (xml.x.get("swfMode") == "true");
 		if (xml.x.exists("cacheOnLoad")) animateSettings.cacheOnLoad = (xml.x.get("cacheOnLoad") == "true");
@@ -405,10 +422,21 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 		var hasInterval:Bool = xml.x.exists("interval");
 		if (hasInterval) beatInterval = Std.parseInt(xml.x.get("interval"));
 
-		loadSprite(Paths.image('characters/$sprite'));
+		XMLUtil.appendSpriteSheetsFromXML(this, xml, 'characters/');
+		
+		if (xml.x.exists("centercam")) centeredCamera = (xml.x.get("centercam") == "true");
+		else if (Flags.USE_LEGACY_CENTER_CAM) centeredCamera = true;
+		else centeredCamera = !isAnimate;
+		
 		for(node in xml.elements) {
 			switch(node.name) {
-				case "anim":
+				case "anim":	
+					if (defaultAimFPS != 24){
+						if (!node.x.exists("fps")) {
+							node.x.set('fps', Std.string(defaultAimFPS));
+						} 
+					}
+
 					XMLUtil.addXMLAnimation(this, node);
 				case "use-extension" | "extension" | "ext":
 					if (XMLImportedScriptInfo.shouldLoadBefore(node)) continue;
@@ -438,8 +466,9 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 
 	public static var characterProperties:Array<String> = [
 		"x", "y", "sprite", "scale", "antialiasing",
-		"flipX", "camx", "camy", "isPlayer", "icon",
-		"color", "gameOverChar", "holdTime", "applyStageMatrix"
+		"flipX", "camx", "camy", "centercam", "isPlayer", "icon",
+		"color", "gameOverChar", "holdTime", "applyStageMatrix",
+		"postStageMatrixApply", "defFps"
 	];
 	public static var characterAnimProperties:Array<String> = [
 		"name", "anim", "label", "x", "y", "fps", "loop", "indices"
@@ -454,6 +483,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 
 		if (cameraOffset.x != 0) xml.set("camx", Std.string(FlxMath.roundDecimal(cameraOffset.x, 2)));
 		if (cameraOffset.y != 0) xml.set("camy", Std.string(FlxMath.roundDecimal(cameraOffset.y, 2)));
+		if (centeredCamera != !isAnimate || Flags.USE_LEGACY_CENTER_CAM) xml.set("centercam", centeredCamera ? "true" : "false");
 
 		if (holdTime != 4) xml.set("holdTime", Std.string(FlxMath.roundDecimal(holdTime, 4)));
 
@@ -463,13 +493,22 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 
 		if (gameOverCharacter != Character.FALLBACK_DEAD_CHARACTER) xml.set("gameOverChar", gameOverCharacter);
 		if (iconColor != null) xml.set("color", iconColor.toWebString());
+		if (defaultAimFPS != 24) xml.set("defFps", Std.string(defaultAimFPS));
 
-		if (sprite != curCharacter) xml.set("sprite", sprite);
+		if (sprite != curCharacter && sprite != null) xml.set("sprite", sprite);
 		if (scale.x != 1) xml.set("scale", Std.string(FlxMath.roundDecimal(scale.x, 4)));
 		if (!antialiasing) xml.set("antialiasing", antialiasing == true ? "true" : "false");
 
 		if (isPlayer) xml.set("isPlayer", isPlayer == true ? "true" : "false");
-		if (isAnimate) xml.set("applyStageMatrix", applyStageMatrix ? "true" : "false");
+		if (isAnimate) {
+			xml.set("applyStageMatrix", applyStageMatrix ? "true" : "false");
+			if (postStageMatrixApply != false || Flags.USE_LEGACY_FLXANIMATE_STAGE_MATRIX)
+				xml.set("postStageMatrixApply", postStageMatrixApply ? "true" : "false");
+		}
+
+		for(e in this.xml.elements)
+			if(e.name == "spritesheet" || e.name == "sheet") 
+				xml.addChild(e.x);
 
 		var anims:Array<AnimData> = [];
 		if (animsOrder != null) {
@@ -485,7 +524,7 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 			animXml.set("name", anim.name);
 			animXml.set("anim", anim.anim);
 			if (anim.loop) animXml.set("loop", Std.string(anim.loop));
-			if (FlxMath.roundDecimal(anim.fps, 2) != 24) animXml.set("fps", Std.string(FlxMath.roundDecimal(anim.fps, 2)));
+			if (FlxMath.roundDecimal(anim.fps, 2) != defaultAimFPS) animXml.set("fps", Std.string(FlxMath.roundDecimal(anim.fps, 2)));
 
 			var offset:FlxPoint = getAnimOffset(anim.name);
 			if (FlxMath.roundDecimal(offset.x, 2) != 0) animXml.set("x", Std.string(FlxMath.roundDecimal(offset.x, 2)));
@@ -597,17 +636,30 @@ class Character extends FunkinSprite implements IBeatReceiver implements IOffset
 		return icon;
 	}
 
-	public static function getList(?mods:Bool = false, includeFolders:Bool = false, folder:String = 'data/characters/'):Array<String> {
+	public static function getList(?mods:Bool = false, includeFolders:Bool = false, ?folder:String = null, ?recursive:Bool = false):Array<String> {
+		final defaultFolder:String = 'data/characters/';
+		if (folder == null) folder = defaultFolder;
 		var list:Array<String> = [];
-		if(includeFolders) {
+		if(includeFolders || recursive) {
 			for (path in Paths.getFolderDirectories(folder, true, mods ? MODS : BOTH)) {
 				if(!path.endsWith("/")) path += "/";
-				list.push(path);
+				if (recursive) {
+					list = list.concat(Character.getList(mods, includeFolders, path, recursive));
+				} else {
+					list.push(path);
+				}
 			}
 		}
 		for (path in Paths.getFolderContent(folder, true, mods ? MODS : BOTH))
-			if (Path.extension(path) == "xml")
-				list.push(CoolUtil.getFilename(path));
+			if (Path.extension(path) == "xml") {
+				if (recursive) {
+					var file:String = folder + CoolUtil.getFilename(path);
+					if (file.startsWith(defaultFolder)) file = file.substr(defaultFolder.length);
+					list.push(file);
+				} else {
+					list.push(CoolUtil.getFilename(path));
+				}
+			}
 		return list;
 	}
 }

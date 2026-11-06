@@ -13,6 +13,8 @@ class GameplayOptions extends TreeMenuScreen {
 		add(new Checkbox(getNameID('downscroll'), getDescID('downscroll'), 'downscroll'));
 		add(new Checkbox(getNameID('ghostTapping'), getDescID('ghostTapping'), 'ghostTapping'));
 		add(new Checkbox(getNameID('preciseInput'), getDescID('preciseInput'), 'preciseInput'));
+		if (Flags.ALLOW_CENTERED_FIELDS)
+			add(new Checkbox(getNameID('centeredFields'), getDescID('centeredFields'), 'centeredFields'));
 		add(new Checkbox(getNameID('naughtyness'), getDescID('naughtyness'), 'naughtyness'));
 		add(new Checkbox(getNameID('camZoomOnBeat'), getDescID('camZoomOnBeat'), 'camZoomOnBeat'));
 		add(new Checkbox(getNameID('autoPause'), getDescID('autoPause'), 'autoPause', __changeAutoPause));
@@ -68,14 +70,7 @@ class AdvancedGameplayOptions extends TreeMenuScreen {
 	public function new() {
 		super('optionsMenu.advanced', 'optionsTree.gameplay.advanced-desc', 'GameplayOptions.Advanced.');
 
-		// Remove locked whenever this PR from FunkinCrew is merged.
-		// https://github.com/FunkinCrew/lime/pull/57
-		for (checkbox in [
-			new Checkbox(getNameID('streamedMusic'), getDescID('streamedMusic'), 'streamedMusic'),
-			new Checkbox(getNameID('streamedVocals'), getDescID('streamedVocals'), 'streamedVocals')
-		]) {
-			checkbox.locked = true;
-			add(checkbox);
-		}
+		add(new Checkbox(getNameID('streamedMusic'), getDescID('streamedMusic'), 'streamedMusic'));
+		add(new Checkbox(getNameID('streamedVocals'), getDescID('streamedVocals'), 'streamedVocals'));
 	}
 }

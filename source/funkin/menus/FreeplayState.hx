@@ -1,5 +1,7 @@
 package funkin.menus;
 
+import flixel.sound.FlxSoundData;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import funkin.backend.chart.Chart;
@@ -9,6 +11,13 @@ import funkin.backend.scripting.events.menu.freeplay.*;
 import funkin.backend.system.Conductor;
 import funkin.game.HealthIcon;
 import funkin.savedata.FunkinSave;
+import funkin.backend.system.Controls.Control;
+import funkin.backend.TurboControls;
+
+import funkin.backend.assets.ModsFolder;
+import funkin.backend.assets.ModsFolderLibrary;
+import funkin.backend.assets.IModsAssetLibrary;
+import funkin.backend.assets.AssetSource;
 
 using StringTools;
 
@@ -110,6 +119,9 @@ class FreeplayState extends MusicBeatState
 	 */
 	public var interpColor:FlxInterpolateColor;
 
+	public var upTurboControl:TurboControls;
+	public var downTurboControl:TurboControls;
+	public var turboBasics:Array<TurboBasic>;
 
 	override function create()
 	{
@@ -132,6 +144,15 @@ class FreeplayState extends MusicBeatState
 		updateCurSong();
 
 		DiscordUtil.call("onMenuLoaded", ["Freeplay"]);
+
+		upTurboControl = new TurboControls([Control.UP]);
+		downTurboControl = new TurboControls([Control.DOWN]);
+		turboBasics = [upTurboControl, downTurboControl];
+
+		for (basic in turboBasics) {
+			basic.delay = 0.6;
+			basic.interval = 0.08;
+		}
 
 		super.create();
 
@@ -236,11 +257,28 @@ class FreeplayState extends MusicBeatState
 		if (Math.abs(lerpScore - intendedScore) <= 10)
 			lerpScore = intendedScore;
 
+		var selectedAnotherSong:Bool = false;
 		if (canSelect) {
-			changeSelection((controls.UP_P ? -1 : 0) + (controls.DOWN_P ? 1 : 0) - FlxG.mouse.wheel);
+			for (basic in turboBasics) basic.update(elapsed);
+
+			changeSelection((upTurboControl.activated ? -1 : 0) + (downTurboControl.activated ? 1 : 0) - FlxG.mouse.wheel);
+			if (FlxG.keys.justPressed.HOME) changeSelection(-curSelected);
+			if (FlxG.keys.justPressed.END) changeSelection(songs.length - 1 - curSelected);
+
 			changeDiff((controls.LEFT_P ? -1 : 0) + (controls.RIGHT_P ? 1 : 0));
 			changeCoopMode((controls.CHANGE_MODE ? 1 : 0)); // TODO: make this configurable
 			// putting it before so that its actually smooth
+
+			if (FlxG.mouse.justPressed && grpSongs != null) {
+				for (index => sprite in grpSongs.members) {
+					if (curSelected != index && FlxG.mouse.overlaps(sprite)) {
+						changeSelection(index - curSelected);
+						selectedAnotherSong = true;
+						break;
+					}
+				}
+			}
+
 			updateOptionsAlpha();
 		}
 
@@ -260,42 +298,38 @@ class FreeplayState extends MusicBeatState
 		autoplayElapsed += elapsed;
 		if (!disableAutoPlay && !songInstPlaying && (autoplayElapsed > timeUntilAutoplay)) {
 			if (curPlayingInst != (curPlayingInst = Paths.inst(curSong.name, curDifficulties[curDifficulty], curSong.instSuffix))) {
-				var streamed = false;
-				/*if (Options.streamedMusic) {
-					var sound = Assets.getMusic(curPlayingInst, true, false);
-					streamed = sound != null;
+				var data = FlxSoundData.fromAssetKey(curPlayingInst, true);
 
-					if (streamed && autoplayShouldPlay) {
-						FlxG.sound.playMusic(sound, 0);
+				if (Options.streamedMusic || disableAsyncLoading) {
+					if (data != null && autoplayShouldPlay) {
+						if (!Options.streamedMusic && data.isStreamable) data.buffer.load();
+
+						FlxG.sound.playMusic(data, 0);
 						Conductor.changeBPM(curSong.bpm, curSong.beatsPerMeasure, curSong.stepsPerBeat);
 					}
-				}*/
+				}
+				else if (data != null) {
+					if (data.isStreamable) {
+						data.buffer.loadAsync((_) -> {
+							if (!autoplayShouldPlay) return;
 
-				if (!streamed) {
-					var huh:Void->Void = function() {
-						var soundPath = curPlayingInst;
-						var sound = null;
-						if (Assets.exists(soundPath, SOUND) || Assets.exists(soundPath, MUSIC))
-							sound = Assets.getSound(soundPath);
-						else
-							FlxG.log.error('Could not find a Sound asset with an ID of \'$soundPath\'.');
-
-						if (sound != null && autoplayShouldPlay) {
-							FlxG.sound.playMusic(sound, 0);
+							FlxG.sound.playMusic(data, 0);
 							Conductor.changeBPM(curSong.bpm, curSong.beatsPerMeasure, curSong.stepsPerBeat);
-						}
+						});
 					}
-					if (!disableAsyncLoading) Main.execAsync(huh);
-					else huh();
+					else if (autoplayShouldPlay) {
+						FlxG.sound.playMusic(data, 0);
+						Conductor.changeBPM(curSong.bpm, curSong.beatsPerMeasure, curSong.stepsPerBeat);
+					}
 				}
 			}
+
 			songInstPlaying = true;
-			if (disableAsyncLoading/* && !Options.streamedMusic*/) dontPlaySongThisFrame = true;
+			if (disableAsyncLoading && !Options.streamedMusic) dontPlaySongThisFrame = true;
 		}
 		#end
 
-
-		if (controls.BACK)
+		if (controls.BACK || FlxG.mouse.justPressedRight)
 		{
 			CoolUtil.playMenuSFX(CANCEL, 0.7);
 			FlxG.switchState(new MainMenuState());
@@ -306,8 +340,16 @@ class FreeplayState extends MusicBeatState
 			convertChart();
 		#end
 
-		if (controls.ACCEPT #if PRELOAD_ALL && !dontPlaySongThisFrame #end)
+		if ((controls.ACCEPT || (!selectedAnotherSong && FlxG.mouse.justPressed && grpSongs?.members[curSelected] != null
+			&& FlxG.mouse.overlaps(grpSongs.members[curSelected]))) #if PRELOAD_ALL && !dontPlaySongThisFrame #end)
+		{
 			select();
+		}
+	}
+
+	override function destroy() {
+		for (basic in turboBasics) basic.destroy();
+		super.destroy();
 	}
 
 	var __opponentMode:Bool = false;
@@ -465,6 +507,7 @@ class FreeplayState extends MusicBeatState
 		}
 
 		changeDiff(0, true);
+		changeCoopMode(0, true);
 
 		#if PRELOAD_ALL
 		autoplayElapsed = 0;
@@ -521,41 +564,95 @@ class FreeplayState extends MusicBeatState
 
 class FreeplaySonglist {
 	public var songs:Array<ChartMetaData> = [];
+	public static final EXCLUDE_SUBFOLDERS:Array<String> = ['charts', 'scripts', 'song'];
 
 	public function new() {}
 
-	public function getSongsFromSource(source:funkin.backend.assets.AssetSource, useTxt:Bool = true) {
-		var songsFound:Array<String> = null;
-		if (useTxt) {
-			var oldPath = Paths.txt('freeplaySonglist');
-			var newPath = Paths.txt('config/freeplaySonglist');
-			if (Paths.assetsTree.existsSpecific(newPath, "TEXT", source)) songsFound = CoolUtil.coolTextFile(newPath);
-			else if (Paths.assetsTree.existsSpecific(oldPath, "TEXT", source)) {
-				Logs.warn("data/freeplaySonglist.txt is deprecated and will be removed in the future. Please move the file to data/config/", DARKYELLOW, "FreeplaySonglist");
-				songsFound = CoolUtil.coolTextFile(oldPath);
+	public static function isSubSongDirectory(subs:Array<String>):Bool {
+		for (i in EXCLUDE_SUBFOLDERS) {
+			if (subs.contains(i)) return false;
+		}
+		return true;
+	}
+
+	// todo: make this better
+	public function getSongsFromSource(source:AssetSource = BOTH, useTxt:Bool = true, ?startDir:String = 'songs/', ?flatten:Bool = true) {
+		var totalSongsFound:Array<String> = [];
+		var mods:Array<IModsAssetLibrary> = ModsFolder.getLoadedModsLibs(true);
+		// addon songs appear lower than the mod's main music now
+		while (mods[0].modName != (ModsFolder.currentModFolder ?? 'assets')) {
+			final thisMod = mods.pop();
+			mods.insert(0, thisMod);
+		}
+		if (source != BOTH && ModsFolder.currentModFolder != null) {
+			var i:Int = 0;
+			while (i < mods.length) {
+				final thisMod = mods[i];
+				if (thisMod.modName == ((source == MODS) ? 'assets' : ModsFolder.currentModFolder))
+					mods.remove(thisMod);
+				else i++;
 			}
 		}
-		if (songsFound == null) songsFound = Paths.getFolderDirectories("songs", false, source);
-		if (songsFound.length > 0) {
-			for (s in songsFound) songs.push(Chart.loadChartMeta(s, source == MODS));
+		var i:Int = 0;
+		while (i < mods.length) {
+			final modLib:ModsFolderLibrary = cast mods[i++];
+			if (modLib == null) { i++; continue; }
+
+			final modName = modLib.modName;
+			var songsFound:Array<String> = [];
+
+			if (useTxt) {
+				var oldPath = Paths.txt('freeplaySonglist/LIB_$modName');
+				var newPath = Paths.txt('config/freeplaySonglist/LIB_$modName');
+
+				if (modLib.exists(newPath, "TEXT")) {
+					for (i in CoolUtil.coolTextFile(newPath)) songsFound.push(i);
+				} else if (modLib.exists(oldPath, "TEXT")) {
+					Logs.warn("data/freeplaySonglist.txt is deprecated and will be removed in the future. Please move the file to data/config/", DARKYELLOW, "FreeplaySonglist");
+					for (i in CoolUtil.coolTextFile(oldPath)) songsFound.push(i);
+				}
+				for (s in songsFound) totalSongsFound.push(s);
+			}
+			if (songsFound.length < 1 || !useTxt) {
+				// only scan the songs folder in this library (assets/ is automatically replaced)
+				var songDirs = modLib.getFolders('assets/' + startDir);
+				function scanForSongs(a:Array<Dynamic>, startDir:String, ?multiScan:Bool = false) {
+					for (i in a) {
+						var subs = modLib.getFolders('$startDir$i');
+						if (isSubSongDirectory(subs)) {
+							if (multiScan) scanForSongs(subs, '$startDir$i');
+							else songsFound.push(StringTools.trim(i + '/'));
+						}
+						else songsFound.push(StringTools.trim(i));
+					}
+				}
+				scanForSongs(songDirs, 'assets/' + startDir, flatten);
+				for (s in songsFound) if (totalSongsFound.indexOf(s) == -1) totalSongsFound.push(s); // dont allow any duplicates
+			}
+		}
+		// put folders at the top (in chart editor)
+		totalSongsFound = totalSongsFound.filter(a -> a.endsWith('/'))
+			.concat(totalSongsFound.filter(a -> !a.endsWith('/')));
+		if (totalSongsFound.length > 0) {
+			for (s in totalSongsFound) songs.push(Chart.loadChartMeta(startDir.substr('songs/'.length) + s, source == MODS));
 			return false;
 		}
 		return true;
 	}
 
-	public static function get(useTxt:Bool = true) {
+	public static function get(useTxt:Bool = true, ?startDir:String = 'songs/', ?flatten:Bool = true) {
 		var songList = new FreeplaySonglist();
 
 		switch(Flags.SONGS_LIST_MOD_MODE) {
 			case 'prepend':
-				songList.getSongsFromSource(MODS, useTxt);
-				songList.getSongsFromSource(SOURCE, useTxt);
+				songList.getSongsFromSource(MODS, useTxt, startDir, flatten);
+				songList.getSongsFromSource(SOURCE, useTxt, startDir, flatten);
 			case 'append':
-				songList.getSongsFromSource(SOURCE, useTxt);
-				songList.getSongsFromSource(MODS, useTxt);
+				songList.getSongsFromSource(SOURCE, useTxt, startDir, flatten);
+				songList.getSongsFromSource(MODS, useTxt, startDir, flatten);
 			default /*case 'override'*/:
-				if (songList.getSongsFromSource(MODS, useTxt))
-					songList.getSongsFromSource(SOURCE, useTxt);
+				if (songList.getSongsFromSource(MODS, useTxt, startDir, flatten))
+					songList.getSongsFromSource(SOURCE, useTxt, startDir, flatten);
 		}
 
 		return songList;

@@ -13,6 +13,9 @@ class ScriptPack extends Script {
 	public var publicVariables:Map<String, Dynamic> = [];
 	public var parent:Dynamic = null;
 
+	/** Reused single-slot argument array for `event` calls, avoiding a per-script allocation on every event. Safe: `call` consumes args synchronously. **/
+	private var __eventArgs:Array<Dynamic> = [null];
+
 	/**
 	 * Loads all scripts in the pack.
 	**/
@@ -89,6 +92,21 @@ class ScriptPack extends Script {
 	}
 
 	/**
+	 * Calls a function with a single argument on every single script.
+	 * Only calls on scripts that are active.
+	 * @param func Function to call
+	 * @param arg Argument to pass to the function
+	**/
+	public override function callOne(func:String, arg:Dynamic):Dynamic {
+		for(e in scripts) {
+			if (!e.active) continue;
+			_ONE_ARG[0] = arg;
+			e.call(func, _ONE_ARG);
+		}
+		return null;
+	}
+
+	/**
 	 * Sends an event to every single script, and returns the event.
 	 * @param func Function to call
 	 * @param event Event (will be the first parameter of the function)
@@ -98,7 +116,8 @@ class ScriptPack extends Script {
 		for(e in scripts) {
 			if(!e.active) continue;
 
-			e.call(func, [event]);
+			__eventArgs[0] = event; // set per-script so nested event dispatch on the same pack can't clobber it
+			e.call(func, __eventArgs);
 			if (event.cancelled && !event.__continueCalls) break;
 		}
 		return event;

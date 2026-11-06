@@ -8,6 +8,7 @@ class ModConfigWarning extends UIState {
 
 	var library:ModsFolderLibrary = null;
 	var goToState:Class<FlxState>;
+	var useAPIWarning:Bool = false;
 
 	public static var defaultModConfigText = 
 '[Common] # This section applies the \'MOD_\' prefix to the flags so you don\'t have to.
@@ -16,24 +17,24 @@ DESCRIPTION="YOUR MOD DESCRIPTION HERE"
 AUTHOR="YOU/YOUR TEAM HERE"
 VERSION="YOUR MOD\'S VERSION HERE"
 
-# DO NOT EDIT!! this is used to check for version compatibility!
+# This is used to check for version compatibility!
+# By default, the current API version is used.
+# Mods with a lower API version will need to get updated if needed!!!!!!!!!!!!!!
 API_VERSION=${Flags.CURRENT_API_VERSION}
 
 DOWNLOAD_LINK="YOUR MOD PAGE LINK HERE"
 
-# Not supported yet
-;MOD_ICON64="path/to/icon64"
-;MOD_ICON32="path/to/icon32"
-;MOD_ICON16="path/to/icon16"
-# The path starts in "your-mod/images/", do not add image extension.
-ICON="path/to/icon"
+# Icons to display as the game window icon. (NOTE: Small icons like 16x16 only shows up in Windows)
+;ICONS=images/icon.png,images/icon64.png,images/icon32.png,images/icon16.png
+;ICONS=icon,icon64,icon32,icon16
 
 [Flags] # This section doesn\'t apply any prefix.
-DISABLE_WARNING_SCREEN=true
 # Set this to false if you want to bring back the warning state (prior to 1.0.0)
 # NOTE: Beta warning state has been renamed from BetaWarningState.hx to WarningState.hx
-DISABLE_LANGUAGES=true
+DISABLE_WARNING_SCREEN=true
+
 # Some people might not translate their mods, but if you do then you may set this to false
+DISABLE_LANGUAGES=true
 
 [Discord] # This section applies the \'MOD_DISCORD_\' prefix to the flags so you don\'t have to.
 CLIENT_ID=""
@@ -47,23 +48,36 @@ LOGO_TEXT=""
 [StateRedirects.force] # Use this if you want to override redirects set by subsequent addons/mods
 ';
 
-	public function new(library:ModsFolderLibrary, ?goToState:Class<FlxState>) {
+	public function new(library:ModsFolderLibrary, ?goToState:Class<FlxState>, ?useAPIWarning:Bool = false) {
 		super();
 		this.library = library;
 		this.goToState = goToState != null ? goToState : funkin.menus.TitleState;
+		this.useAPIWarning = useAPIWarning;
+	}
+
+	public function goBack() {
+		MusicBeatState.skipTransOut = MusicBeatState.skipTransIn = false;
+		FlxG.switchState(cast Type.createInstance(goToState, []));
 	}
 
 	override function createPost() {
 		super.createPost();
 		hadPopup = true;
 
-		var substate = new UIWarningSubstate(TU.translate("modConfigWarning.warningTitle"), TU.translate("modConfigWarning.warningDesc"), [
+		var substate = useAPIWarning ? new UIWarningSubstate(TU.translate("modApiWarning.warningTitle", [Flags.MOD_API_VERSION != null ? Std.string(Flags.MOD_API_VERSION) : '???', Flags.CURRENT_API_VERSION]), TU.translate("modApiWarning.warningDesc"), [
+			{
+				label: TU.translate("editor.ok"),
+				color: 0x969533,
+				onClick: function (_) {
+					goBack();
+				}
+			}
+		], false) : new UIWarningSubstate(TU.translate("modConfigWarning.warningTitle"), TU.translate("modConfigWarning.warningDesc"), [
 			{
 				label: TU.translate("editor.notNow"),
 				color: 0x969533,
 				onClick: function (_) {
-					MusicBeatState.skipTransOut = MusicBeatState.skipTransIn = false;
-					FlxG.switchState(cast Type.createInstance(goToState, []));
+					goBack();
 				}
 			},
 			{
@@ -75,8 +89,7 @@ LOGO_TEXT=""
 						{
 							label: TU.translate("editor.ok"),
 							onClick: function (_) {
-								MusicBeatState.skipTransOut = MusicBeatState.skipTransIn = false;
-								FlxG.switchState(cast Type.createInstance(goToState, []));
+								goBack();
 							}
 						},
 					], false));

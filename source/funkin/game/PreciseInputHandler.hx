@@ -5,6 +5,7 @@ import flixel.input.keyboard.FlxKey;
 import funkin.backend.system.Conductor;
 import funkin.backend.system.Controls;
 import funkin.backend.utils.ControlsUtil;
+import haxe.Int64;
 import lime.app.Application;
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
@@ -38,8 +39,8 @@ class PreciseInputHandler {
 
 	public function new(controls:Controls, keyCount:Int) {
 		rebind(controls, keyCount);
-		Application.current.window.onKeyDown.add(onKeyDown);
-		Application.current.window.onKeyUp.add(onKeyUp);
+		Application.current.window.onKeyDownPrecise.add(onKeyDown);
+		Application.current.window.onKeyUpPrecise.add(onKeyUp);
 	}
 
 	/** Refreshes the key binds from the given controls (call after rebinding keys). **/
@@ -78,26 +79,29 @@ class PreciseInputHandler {
 	inline function inputBlocked():Bool
 		return !enabled || (FlxG.state != null && FlxG.state.subState != null && !FlxG.state.persistentUpdate);
 
-	// SDL timestamp of the key event being handled (same clock as
-	// System.getTimer), captured by lime just before dispatching. 0 when the
-	// native side has no timestamp support, which Conductor treats as "now".
-	inline function eventStamp():Float
-		return lime._internal.backend.native.NativeApplication.lastKeyTimestamp;
+	// SDL3 key event timestamp in nanoseconds (same clock as System.getTimer,
+	// which is SDL_GetTicksNS in ms), converted to ms. 0 when the native side
+	// has no timestamp support, which Conductor treats as "now".
+	inline static function eventStamp(timestamp:Int64):Float {
+		var low:Float = timestamp.low;
+		if (low < 0) low += 4294967296.0;
+		return (timestamp.high * 4294967296.0 + low) / 1e6;
+	}
 
-	function onKeyDown(code:KeyCode, _:KeyModifier) {
+	function onKeyDown(code:KeyCode, _:KeyModifier, timestamp:Int64) {
 		if (inputBlocked()) return;
 		var dir = getDir(code);
 		if (dir == -1 || held[dir]) return; // held guard also filters OS key repeat
 		held[dir] = true;
-		queue.push({dir: dir, press: true, songPos: Conductor.getEventSongPosition(eventStamp())});
+		queue.push({dir: dir, press: true, songPos: Conductor.getEventSongPosition(eventStamp(timestamp))});
 	}
 
-	function onKeyUp(code:KeyCode, _:KeyModifier) {
+	function onKeyUp(code:KeyCode, _:KeyModifier, timestamp:Int64) {
 		var dir = getDir(code);
 		if (dir == -1) return;
 		held[dir] = false;
 		if (!inputBlocked())
-			queue.push({dir: dir, press: false, songPos: Conductor.getEventSongPosition(eventStamp())});
+			queue.push({dir: dir, press: false, songPos: Conductor.getEventSongPosition(eventStamp(timestamp))});
 	}
 
 	/** Returns the queued events (oldest first) and clears the queue. **/
@@ -108,8 +112,8 @@ class PreciseInputHandler {
 	}
 
 	public function dispose() {
-		Application.current.window.onKeyDown.remove(onKeyDown);
-		Application.current.window.onKeyUp.remove(onKeyUp);
+		Application.current.window.onKeyDownPrecise.remove(onKeyDown);
+		Application.current.window.onKeyUpPrecise.remove(onKeyUp);
 		queue = [];
 		enabled = false;
 	}

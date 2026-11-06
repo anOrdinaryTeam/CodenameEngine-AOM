@@ -119,6 +119,23 @@ final class MemoryUtil {
 		#end
 	}
 
+	/**
+	 * Gets the current process memory usage (Working Set / RSS) from the OS.
+	 * This is much more granular than Haxe GC memory and updates more frequently.
+	 * Returns the value in bytes, matching what you see in Task Manager / Activity Monitor.
+	 */
+	public static inline function currentProcessMemUsage():Float {
+		#if (cpp && windows)
+		return funkin.backend.utils.native.Windows.getCurrentProcessMemory();
+		#elseif (cpp && mac)
+		return funkin.backend.utils.native.Mac.getCurrentProcessMemory();
+		#elseif (cpp && linux)
+		return funkin.backend.utils.native.Linux.getCurrentProcessMemory();
+		#else
+		return currentMemUsage();
+		#end
+	}
+
 
 	/**
 	 * Gets the memory type of the system.
@@ -166,8 +183,15 @@ final class MemoryUtil {
 		];
 		var memoryOutput:Int = -1;
 
-		var process = new HiddenProcess("powershell", ["-Command", "Get-CimInstance Win32_PhysicalMemory | Select-Object -ExpandProperty SMBIOSMemoryType" ]);
-		if (process.exitCode() == 0) memoryOutput = Std.int(Std.parseFloat(process.stdout.readAll().toString().trim().split("\n")[1]));
+		try {
+			var process = new HiddenProcess("wmic", ["memorychip", "get", "SMBIOSMemoryType"]);
+			if (process.exitCode() == 0) memoryOutput = Std.int(Std.parseFloat(process.stdout.readAll().toString().trim().split("\n")[1]));
+		}
+		catch (e) {
+			var process = new HiddenProcess("powershell", ["-Command", "Get-CimInstance Win32_PhysicalMemory | Select-Object -ExpandProperty SMBIOSMemoryType"]);
+			if (process.exitCode() == 0) memoryOutput = Std.int(Std.parseFloat(process.stdout.readAll().toString().trim().split("\n")[1]));
+		}
+
 		if (memoryOutput != -1) return memoryMap[memoryOutput] == null ? 'Unknown ($memoryOutput)' : memoryMap[memoryOutput];
 		#elseif mac
 		var process = new HiddenProcess("system_profiler", ["SPMemoryDataType"]);

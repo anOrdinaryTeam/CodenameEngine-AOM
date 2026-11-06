@@ -47,7 +47,7 @@ The engine uses [HaxeFlixel](https://haxeflixel.com/) and it mainly features:
 ---
 
 > [!NOTE]
-> Codename Engine as for now supports **Windows x64**, **Mac OS x64** and **Linux x64**.<br>
+> Codename Engine as for now supports **Windows x64**, **Mac OS Universal** and **Linux x64**.<br>
 > More platforms will soon come, stay tuned!<br>
 > - [ ] **Web (HTML5) Support**
 > - [ ] **Mobile Support**
@@ -89,16 +89,15 @@ The engine uses [HaxeFlixel](https://haxeflixel.com/) and it mainly features:
   - Steal code from Codename Engine for another different project that is not Codename Engine related (Codename Engine mods excluded) without properly crediting
   - Release the entirety of Codename Engine on platforms (mods that use Codename Engine as source are fine)
 
-  #### *If you need more info or feel like asking to do something which is not listed here, ask us directly on our [discord server](https://discord.com/servers/codename-engine-860561967383445535)!*
+  #### *If you need more info or feel like asking to do something which is not listed here, ask us directly on our [discord server](https://discord.gg/codename-crew)!*
 </details>
 
 <details>
   <summary><h2>Credits</h2></summary>
 
 - All main Credits can be seen inside the Engine and specifically [HERE](https://github.com/CodenameCrew/CodenameEngine/graphs/contributors)
-- Credits to the [FlxAnimate](https://github.com/Dot-Stuff/flxanimate) team for the Animate Atlas support
+- Credits to the [flixel-animate](https://github.com/MaybeMaru/flixel-animate) team for the Animate Atlas support
 - Credits to Smokey555 for the backup Animate Atlas to spritesheet code
 - Credits to MAJigsaw77 for [hxvlc](https://github.com/MAJigsaw77/hxvlc) (video cutscene/mp4 support) and [hxdiscord_rpc](https://github.com/MAJigsaw77/hxdiscord_rpc) (discord rpc integration)
-- Credits to [TheoDev](https://github.com/TheoDevelops) for [FunkinModchart](https://lib.haxe.org/p/funkin-modchart/). ***(library used for modcharting features)***
 - Credits to [Ninjamuffin99](https://github.com/ninjamuffin99) and the [Funkin Crew](https://github.com/FunkinCrew) for the base game Friday Night Funkin'
 </details>

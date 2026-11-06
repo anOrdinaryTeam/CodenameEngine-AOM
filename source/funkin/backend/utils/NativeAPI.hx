@@ -29,12 +29,6 @@ class NativeAPI {
 		#end
 	}
 
-	@:dox(hide) public static function registerAudio() {
-		#if windows
-		Windows.registerAudio();
-		#end
-	}
-
 	@:dox(hide) public static function registerAsDPICompatible() {
 		#if windows
 		Windows.registerAsDPICompatible();

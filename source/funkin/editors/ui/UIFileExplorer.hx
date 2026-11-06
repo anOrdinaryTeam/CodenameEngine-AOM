@@ -2,8 +2,14 @@ package funkin.editors.ui;
 
 import haxe.io.Bytes;
 import lime.ui.FileDialog;
+import flixel.util.typeLimit.OneOfTwo;
+#if lime_funkin
+import lime.ui.FileDialogFilter;
+#end
 
 class UIFileExplorer extends UISliceSprite {
+	public var startSize = FlxPoint.get();
+
 	public var uploadButton:UIButton;
 	public var uploadIcon:FlxSprite;
 
@@ -12,22 +18,34 @@ class UIFileExplorer extends UISliceSprite {
 
 	public var file:Bytes = null;
 	public var filePath:String = null;
+	public var fileExt:String = null; // avoid constant Path.extension checks
 	public var onFile:(String, Bytes)->Void;
 
 	public var uiElement:FlxSprite;
 	
-	public var fileType:String = "txt";
+	public var fileType:Array<String> = ["txt"];
 
-	public function new(x:Float, y:Float, ?w:Int, ?h:Int, fileType:String = "txt", ?onFile:(String, Bytes)->Void) {
+	public function new(x:Float, y:Float, ?w:Int, ?h:Int, fileType:OneOfTwo<String, Array<String>>, ?onFile:(String, Bytes)->Void) {
 		super(x, y, (w != null ? w : 320), (h != null ? h : 58), 'editors/ui/inputbox');
-		this.fileType = fileType;
+		startSize = FlxPoint.get(bWidth, bHeight);
+		if (fileType != null) {
+			// backward compat with custom editors
+			if (fileType is String) fileType = cast(fileType, String).split(';');
+			this.fileType = fileType;
+		}
 
 		if (onFile != null) this.onFile = onFile;
 
-		uploadButton = new UIButton(x + 8, y+ 8, null, function () {
+		uploadButton = new UIButton(x + 8, y + 8, null, function () {
+			#if lime_funkin
+			FileDialog.openFile(FlxG.stage.window, "Open File", (fileNames:Array<String>, activeFilter:FileDialogFilter) -> {
+				loadFile(fileNames[0]);
+			}, this.fileType != null ? [new FileDialogFilter("Specified File Extension", this.fileType.join(";"))] : null);
+			#else
 			var fileDialog = new FileDialog();
 			fileDialog.onSelect.add(loadFile);
-			fileDialog.browse(OPEN, this.fileType);
+			fileDialog.browse(OPEN, this.fileType[0]); // i dunno bro
+			#end
 		}, bWidth - 16, bHeight - 16);
 		members.push(uploadButton);
 
@@ -46,6 +64,18 @@ class UIFileExplorer extends UISliceSprite {
 		deleteButton.visible = deleteButton.selectable = deleteIcon.visible = false;
 	}
 
+	function updateButtonsPos(){
+		uploadButton.follow(this, 8, 8);
+		uploadIcon.follow(uploadButton, (uploadButton.bWidth / 2) - 8, ((bHeight-16)/2) - 8);
+		deleteButton.follow(this,bWidth - (bHeight - 16) - 8,8);
+		deleteIcon.follow(deleteButton, ((bHeight - 16)/2) - 8, ((bHeight - 16)/2) - 8);
+	}
+
+	public override function draw() {
+		updateButtonsPos();
+		super.draw();
+	}
+
 	public override function update(elapsed:Float) {
 		super.update(elapsed);
 
@@ -62,7 +92,9 @@ class UIFileExplorer extends UISliceSprite {
 	}
 
 	public function loadFile(path:String) {
+		if (path == null) return;
 		file = cast sys.io.File.getBytes(filePath = path);
+		fileExt = haxe.io.Path.extension(filePath);
 		deleteButton.visible = deleteButton.selectable = deleteIcon.visible = !(uploadButton.visible = uploadButton.selectable = false);
 
 		if (this.onFile != null) this.onFile(filePath, file);
@@ -74,6 +106,9 @@ class UIFileExplorer extends UISliceSprite {
 			members.remove(uiElement);
 			uiElement.destroy();
 		}
+
+		bWidth = Std.int(startSize.x);
+		bHeight = Std.int(startSize.y);
 
 		file = null; onFile(null, null);
 		MemoryUtil.clearMajor();

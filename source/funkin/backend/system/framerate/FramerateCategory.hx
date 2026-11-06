@@ -36,14 +36,15 @@ class FramerateCategory extends Sprite {
 		this.title.multiline = this.title.wordWrap = false;
 		this.text.multiline = true;
 
-
 		this.text.y = this.title.y + this.title.height + 2;
 	}
 
-	public function reload() {}
+	public function reload() {
+		for(label in [this.title, this.text]) label.defaultTextFormat = new TextFormat(Framerate.fontName, label == this.title ? 18 : 12, -1);
+	}
 
 	public override function __enterFrame(t:Float) {
-		if (alpha <= 0.05) return;
+		if (alpha <= 0.05 || !visible) return;
 		super.__enterFrame(t);
 
 		var width = Math.max(this.title.width, this.text.width) + (Framerate.instance.x * 2);
@@ -51,5 +52,9 @@ class FramerateCategory extends Sprite {
 		bgSprite.x = -Framerate.instance.x;
 		bgSprite.scaleX = width;
 		bgSprite.scaleY = height;
+	}
+
+	public static inline function addLine(buf:StringBuf, ...values:Array<Dynamic>):Void {
+		for (v in values) buf.add(v);
 	}
 }

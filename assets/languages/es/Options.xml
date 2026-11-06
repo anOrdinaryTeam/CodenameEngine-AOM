@@ -67,6 +67,13 @@
 	</group>
 
 	<group name="AppearanceOptions" prefix="AppearanceOptions.">
+		<str id="framePacer-name">Sincronía</str>
+		<str id="framePacer-desc">Pantalla ajusta los FPS a la tasa de refresco de tu monitor y activa la sincronización de scanlines y la alineación de envío; la opción FPS se desactiva mientras está activa. Adaptativo sólo las activa cuando los FPS coinciden con la tasa de refresco o una división exacta de ella (1/2, 1/4...). Apagado vuelve al comportamiento anterior. Sin límite elimina por completo el límite de FPS. La sincronización cuesta unos 0.3 ms de latencia de entrada: en pantalla completa la línea de desgarro queda fijada en el borde de la pantalla, fuera de la vista, y en modo ventana cada fotograma se muestra en vez de dar tirones.</str>
+		<str id="framePacer-off">Apagado</str>
+		<str id="framePacer-adaptive">Adaptativo</str>
+		<str id="framePacer-followDisplay">Pantalla</str>
+		<str id="framePacer-unlimited">Sin límite</str>
+
 		<str id="framerate-name">FPS</str>
 		<str id="framerate-desc">Yo creo que se explica sólo.</str>
 		<str id="vsync-name">VSync</str>
@@ -135,7 +142,7 @@
 
 			<str id="streamedMusic-name">Transmición de Música</str>
 			<str id="streamedMusic-desc">Si está activado, la música será transmitida en tiempo real, liberando un montón de RAM, aunque usará más CPU si hay mucho audio al mismo tiempo (EXPERIMENTAL). Desactivarlo consumirá más RAM, especialmente en canciones más largas. Si no estás seguro, déjalo activado.</str>
-			
+
 			<str id="streamedVocals-name">Transmición de Vocales</str>
 			<str id="streamedVocals-desc">Si está activado, las vocales también serán transmitidas, impactará el rendimiento si hay muchas vocales (EXPERIMENTAL). Si no estás seguro, déjalo desactivade.</str>
 		</group>
@@ -178,7 +185,7 @@
 
 		<str id="bypassEditorsResize-name">Desactivar Tamaño Mínimo</str>
 		<str id="bypassEditorsResize-desc">Desactiva el tamaño mínimo de los editores (Editores Adaptables debe estar activado).</str>
-		
+
 		<str id="editorSFX-name">Sonidos del Editor</str>
 		<str id="editorSFX-desc">Si está activado, habran sonidos en los editores (ej: al activar opciones...)</str>
 		<str id="editorCharterPrettyPrint-name">Formateo de Chart</str>
@@ -187,6 +194,9 @@
 		<str id="editorCharacterPrettyPrint-desc">Si está activado, los archivos guardados desde el editor de personajes se formatearán para poder leerse fácilmente.</str>
 		<str id="editorStagePrettyPrint-name">Formateo de Escenario</str>
 		<str id="editorStagePrettyPrint-desc">Si está activado, los archivos guardados desde el editor de escenarios se formatearán para poder leerse fácilmente.</str>
+
+		<str id="charterSwapEventSides-name">Cambiar Lados de Eventos</str>
+		<str id="charterSwapEventSides-desc">Si está activado, eventos globales estarán a la izquierda de las pistas.</str>
 
 		<str id="editorPrettyPrint-desc">Si está activado, los charts se guardarán de forma más legible (no aplica a XMLs)</str>
 
@@ -206,6 +216,9 @@
 		<str id="charterAutoSavesSeparateFolder-desc">Si está activado, el autoguardado se guardará en otra carpeta con su fecha en vez de sobreescribir el archivo actual. (song/autosaves/)</str>
 		<str id="songOffsetAffectEditors-name">Offset en el Charter</str>
 		<str id="songOffsetAffectEditors-desc">Si está activado, esto también activará la opción de Offset de Canción en el Editor de Charts.</str>
+
+		<str id="legacyMemoryCounter-name">Contador de Memoria Clásico</str>
+		<str id="legacyMemoryCounter-desc">Si está activado, el contador de memoria mostrará el uso de memoria del GC de Haxe y su máximo (el comportamiento original) en vez de la memoria de trabajo vista en el Administrador de Tareas.</str>
 	</group>
 
 </language>

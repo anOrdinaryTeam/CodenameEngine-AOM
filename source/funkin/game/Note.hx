@@ -77,9 +77,7 @@ class Note extends FlxSprite
 
 	public var strumID(get, never):Int;
 	private function get_strumID() {
-		var id = noteData % strumLine.members.length;
-		if (id < 0) id = 0;
-		return id;
+		return if (noteData < 0) 0; else noteData % strumLine.members.length;
 	}
 
 	public var sustainLength:Float = 0;
@@ -103,6 +101,8 @@ class Note extends FlxSprite
 	@:dox(hide) public var __strumCameras:Array<FlxCamera> = null;
 	@:dox(hide) public var __strum:Strum = null;
 	@:dox(hide) public var __noteAngle:Float = 0;
+
+	@:dox(hide) private var __lastSustainClipT:Float = -1.0;
 
 	private function get_noteType() {
 		if (PlayState.instance == null) return null;
@@ -155,8 +155,8 @@ class Note extends FlxSprite
 		this.strumTime = noteData.time.getDefault(0) + sustainOffset;
 		this.noteData = noteData.id.getDefault(0);
 
-		var customType = Paths.image('game/notes/${this.noteType}');
-		var event = EventManager.get(NoteCreationEvent).recycle(this, strumID, this.noteType, noteTypeID, PlayState.instance.strumLines.members.indexOf(strumLine), mustPress,
+		var customType = this.noteType != null ? Paths.image('game/notes/${this.noteType}') : null;
+		var event = EventManager.get(NoteCreationEvent).recycle(this, strumID, this.noteType, noteTypeID, (PlayState.instance != null) ? (PlayState.instance.strumLines.members.indexOf(strumLine)) : strumLine.ID, mustPress,
 			(this.noteType != null && customTypePathExists(customType)) ? 'game/notes/${this.noteType}' : 'game/notes/default', @:privateAccess strumLine.strumScale * Flags.DEFAULT_NOTE_SCALE, animSuffix);
 
 		if (PlayState.instance != null)
@@ -231,7 +231,7 @@ class Note extends FlxSprite
 		return v;
 	}
 	inline function get_useAntialiasingFix() {
-		return gapFix>0;
+		return gapFix > 0;
 	}
 
 	/**
@@ -272,8 +272,8 @@ class Note extends FlxSprite
 				__lastStrumHalfH = __strum.height * 0.5;
 			}
 
-			x = -origin.x + offset.x + (originalY * __lastAngleCos) + __strum.x + __lastStrumHalfW;
-			y = -origin.y + offset.y + (originalY * __lastAngleSin) + __strum.y + __lastStrumHalfH;
+			x = -origin.x + offset.x + (originalY * __lastAngleCos + originalX * __lastAngleSin) + __strum.x + __lastStrumHalfW;
+			y = -origin.y + offset.y + (originalY * __lastAngleSin - originalX * __lastAngleCos) + __strum.y + __lastStrumHalfH;
 			super.draw();
 			x = originalX;
 			y = originalY;
@@ -290,14 +290,15 @@ class Note extends FlxSprite
 
 	@:noCompletion @:dox(hide) override function isOnScreen(?camera:FlxCamera):Bool {
 		var downscrollCam = (Std.isOfType(camera, HudCamera) ? cast(camera, HudCamera).downscroll : false);
-
+		if (updateFlipY) {
+			flipY = (isSustainNote && flipSustain) && (downscrollCam != (lastScrollSpeed < 0));
+		}
 		if (downscrollCam == __lastDownscrollCam)
 			return super.isOnScreen(camera);
 		else
 			__lastX = x;
 
-		if (updateFlipY) flipY = (isSustainNote && flipSustain) && (downscrollCam != (__strum != null && __strum.getScrollSpeed(this) < 0));
-		if (downscrollCam && __strum != null) {
+		if (downscrollCam && __strum != null && __strum.updateNotesPosX && updateNotesPosX) {
 			x = -x + 2 * (__strum.x - origin.x + offset.x) + __strum.width;
 		}
 		final isOnScreen = super.isOnScreen(camera);
@@ -314,7 +315,7 @@ class Note extends FlxSprite
 	}
 
 	public function isOnScreenOriginal(?camera:FlxCamera):Bool {
-    return super.isOnScreen(camera);
+    	return super.isOnScreen(camera);
 	}
 
 	public var earlyPressWindow:Float = Flags.EARLY_HIT_WINDOW_RANGE;
@@ -326,7 +327,7 @@ class Note extends FlxSprite
 		if (lastScrollSpeed != scrollSpeed) {
 			lastScrollSpeed = scrollSpeed;
 			if (nextSustain != null) {
-				scale.y = (sustainLength * 0.45 * scrollSpeed) / frameHeight;
+				scale.y = (sustainLength * 0.45 * Math.abs(scrollSpeed)) / frameHeight;
 				updateHitbox();
 				scale.y += gapFix / frameHeight;
 			}
@@ -336,20 +337,24 @@ class Note extends FlxSprite
 	}
 
 	public function updateSustainClip() if (wasGoodHit && !noSustainClip) {
-		var t = CoolUtil.bound((Conductor.songPosition - strumTime) / height * 0.45 * lastScrollSpeed, 0, 1);
-		@:bypassAccessor {
-			if (clipRect == null) clipRect = FlxRect.get();
-			clipRect.set(0, frameHeight * t, frameWidth, frameHeight * (1 - t));
-		}
-		@:privateAccess {
-			if (frame != null && _frame != null)
-				_frame = frame.clipTo(clipRect, _frame);
+		var t = CoolUtil.bound((Conductor.songPosition - strumTime) / height * 0.45 * Math.abs(lastScrollSpeed), 0, 1);
+		if (t != __lastSustainClipT || _frame == null) {
+			__lastSustainClipT = t;
+			@:bypassAccessor {
+				if (clipRect == null) clipRect = FlxRect.get();
+				clipRect.set(0, frameHeight * t, frameWidth, frameHeight * (1 - t));
+			}
+			@:privateAccess {
+				if (frame != null && _frame != null)
+					_frame = frame.clipTo(clipRect, _frame);
+			}
 		}
 	}
 
 	@:noCompletion
 	override function set_clipRect(rect:FlxRect):FlxRect {
 		@:bypassAccessor clipRect = rect;
+		__lastSustainClipT = -1.0;
 
 		@:privateAccess if (frame != null) {
 			if (rect != null && _frame != null)

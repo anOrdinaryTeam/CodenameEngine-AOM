@@ -85,7 +85,7 @@ class Chart {
 	}
 
 	inline public static function defaultChartMetaFields(data:ChartMetaData):ChartMetaData {
-		data.setFieldDefault("displayName", data.name);
+		data.setFieldDefault("displayName", ~/(.*[\/])/g.map(data.name, _->''));
 
 		data.setFieldDefault("bpm", Flags.DEFAULT_BPM);
 		data.setFieldDefault("beatsPerMeasure", Flags.DEFAULT_BEATS_PER_MEASURE);
@@ -184,7 +184,7 @@ class Chart {
 
 		var valid:Bool = true, namePrint = '$songName $difficulty' + ((variant != null && variant != '') ? ' ($variant)' : '');
 		if (!Assets.exists(chartPath)) {
-			Logs.error('Chart for song $namePrint at "$chartPath" was not found.');
+			Logs.warn('Chart file was not found for "$namePrint" in path: $chartPath');
 			valid = false;
 		}
 		var data:Dynamic = null;
