@@ -90,10 +90,17 @@ class MainState extends FlxState {
 
 		for (path in addonPaths) {
 			if (path == null) continue;
-			if (!isDirectory(path)) continue;
 
-			for (addon in FileSystem.readDirectory(path)) {
-				if (!FileSystem.isDirectory(path + addon)) {
+			var addons:Array<String> = isDirectory(path) ? FileSystem.readDirectory(path) : [];
+			#if mobile
+			// addons packed in the app (loadModLib reads them from the package); one on disk wins
+			final packedAddons = ModsFolder.getPackedFolders(path);
+			for (addon in packedAddons) if (!addons.contains(addon)) addons.push(addon);
+			#end
+			if (addons.length == 0) continue;
+
+			for (addon in addons) {
+				if (#if mobile !packedAddons.contains(addon) && #end !FileSystem.isDirectory(path + addon)) {
 					if (Flags.ALLOWED_ZIP_EXTENSIONS.contains(Path.extension(addon))) addon = Path.withoutExtension(addon);
 					else continue;
 				}

@@ -119,19 +119,26 @@ class ModsFolder {
 	/**
 	 * Names of the mods packed in the app's `mods/` folder.
 	 */
-	public static function getPackedModsList():Array<String> {
-		final mods:Array<String> = [];
+	public static inline function getPackedModsList():Array<String>
+		return getPackedFolders(modsPath);
+
+	/**
+	 * Names of the folders packed in the app directly inside `path`
+	 * (like the addons in `./addons/` or `./mods/AOM-Revival/addons/`).
+	 */
+	public static function getPackedFolders(path:String):Array<String> {
+		final folders:Array<String> = [];
 		final lib = packedSource();
-		if (lib == null) return mods;
-		final start = PackedModFolderLibrary.normalize(modsPath) + "/";
+		if (lib == null) return folders;
+		final start = PackedModFolderLibrary.normalize(path) + "/";
 		for (id in lib.list(null)) {
 			if (!id.startsWith(start)) continue;
 			final slash = id.indexOf("/", start.length);
-			if (slash == -1) continue; // a file directly in mods/, not a mod
-			final mod = id.substring(start.length, slash);
-			if (!mods.contains(mod)) mods.push(mod);
+			if (slash == -1) continue; // a file directly in the folder, not a subfolder
+			final name = id.substring(start.length, slash);
+			if (!folders.contains(name)) folders.push(name);
 		}
-		return mods;
+		return folders;
 	}
 	#end
 

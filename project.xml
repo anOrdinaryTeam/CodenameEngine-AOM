@@ -200,6 +200,8 @@
 
 		<!-- TODO: make it copy this manually, instead of using assets node, so it doesn't manually check for fonts -->
 		<assets path='mods' rename='mods' embed='false' />
+		<!-- global addons packed in the app on mobile, loaded in place like the packed mods -->
+		<assets path='addons' rename='addons' embed='false' exclude="readme.txt" if="mobile" />
 	</section>
 
 	<!-- <assets path='art/readme.txt' rename='do NOT readme.txt' /> -->
