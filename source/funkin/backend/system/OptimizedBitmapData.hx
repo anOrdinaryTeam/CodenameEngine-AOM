@@ -6,9 +6,9 @@ import openfl.display.BitmapData;
 @:deprecated("Use openfl.display.BitmapData.toHardware instead.")
 class OptimizedBitmapData extends BitmapData {
 	@SuppressWarnings("checkstyle:Dynamic")
-	@:noCompletion private override function __fromImage(image:#if lime Image #else Dynamic #end):Void
+	@:noCompletion private override function __fromImage(image:#if lime Image #else Dynamic #end, hardware:Bool = false):Void
 	{
-		super.__fromImage(image);
+		super.__fromImage(image, hardware);
 		toHardware();
 	}
 }

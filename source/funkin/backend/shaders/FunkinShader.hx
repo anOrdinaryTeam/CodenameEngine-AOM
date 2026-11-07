@@ -399,7 +399,7 @@ class FunkinShader extends FlxRuntimeShader implements IHScriptCustomBehaviour {
 		return v;
 	}
 
-	function thisHasField(v:String):Bool return __thisHasField(v);
+	override function thisHasField(v:String):Bool return __thisHasField(v);
 
 	function registerParameter(name:String, type:String, isUniform:Bool) {
 		if (data == null) return;
