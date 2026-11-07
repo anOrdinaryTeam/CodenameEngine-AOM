@@ -19,7 +19,6 @@
 		anOrdinaryTeam/lime (ShadowEngineTeam/lime) only has the static
 		FileDialog.openFile / saveFile API, which the editors use under this define.
 	-->
-	<haxedef name="lime_funkin"/>
 
 	<!-- Comment this out to disable commit number on FPS -->
 	<define name="SHOW_BUILD_ON_FPS"/>

@@ -3,7 +3,7 @@ package funkin.editors.ui;
 import haxe.io.Bytes;
 import lime.ui.FileDialog;
 import flixel.util.typeLimit.OneOfTwo;
-#if lime_funkin
+#if lime_shadow
 import lime.ui.FileDialogFilter;
 #end
 
@@ -37,7 +37,7 @@ class UIFileExplorer extends UISliceSprite {
 		if (onFile != null) this.onFile = onFile;
 
 		uploadButton = new UIButton(x + 8, y + 8, null, function () {
-			#if lime_funkin
+			#if lime_shadow
 			FileDialog.openFile(FlxG.stage.window, "Open File", (fileNames:Array<String>, activeFilter:FileDialogFilter) -> {
 				loadFile(fileNames[0]);
 			}, this.fileType != null ? [new FileDialogFilter("Specified File Extension", this.fileType.join(";"))] : null);

@@ -2,7 +2,7 @@ package funkin.editors;
 
 import haxe.io.Path;
 import lime.ui.FileDialog;
-#if lime_funkin
+#if lime_shadow
 import lime.ui.FileDialogFilter;
 #end
 
@@ -29,7 +29,7 @@ class SaveSubstate extends MusicBeatSubstate {
 	public override function create() {
 		super.create();
 
-		#if lime_funkin
+		#if lime_shadow
 		FileDialog.saveFile(FlxG.stage.window, "Save File", (fileName:String, activeFilter:FileDialogFilter) -> {
 			if (fileName != null) CoolUtil.safeSaveFile(fileName, data);
 			close();
