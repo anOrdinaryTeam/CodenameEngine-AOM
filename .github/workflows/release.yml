@@ -81,13 +81,13 @@ jobs:
           mkdir -p renamed
 
           # Windows
-          mv artifacts/windows/executable/CodenameEngine.exe renamed/update-windows.exe
+          mv artifacts/windows/executable/AOM.exe renamed/update-windows.exe
           cd artifacts/windows/full_build
           zip -r ../../../renamed/"Codename Engine-Windows.zip" *
           cd -
 
           # Mac OS
-          mv artifacts/macos/executable/CodenameEngine renamed/update-mac
+          mv artifacts/macos/executable/AOM renamed/update-mac
           cd artifacts/macos/full_build
           if [ -f CodenameEngine.tar.gz ]; then
             # Keep tar.gz as-is
@@ -99,7 +99,7 @@ jobs:
           cd -
 
           # Linux
-          mv artifacts/linux/executable/CodenameEngine renamed/update-linux
+          mv artifacts/linux/executable/AOM renamed/update-linux
           cd artifacts/linux/full_build
           zip -r ../../../renamed/"Codename Engine-Linux.zip" *
           cd -

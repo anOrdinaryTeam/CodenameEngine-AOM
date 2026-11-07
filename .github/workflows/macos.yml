@@ -30,7 +30,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Codename Engine (Executable Only)
-          path: export/release/macos/bin/CodenameEngine.app/Contents/MacOS/CodenameEngine
+          path: |
+            export/release/macos/bin/AOM.app/Contents/MacOS/AOM
+            export/release/macos/bin/AOM.app/Contents/MacOS/lime.ndll
       - name: Uploading artifact (entire build)
         uses: actions/upload-artifact@v4
         with:
