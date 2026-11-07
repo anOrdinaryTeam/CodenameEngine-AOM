@@ -41,9 +41,6 @@ class FunkinShader extends FlxRuntimeShader implements IHScriptCustomBehaviour {
 	 */
 	public var glslVer:String;
 
-	@:noCompletion public var _fragmentFilePath:Null<String>;
-	@:noCompletion public var _vertexFilePath:Null<String>;
-
 	var __rawFragmentSource:Null<String>;
 	var __rawVertexSource:Null<String>;
 	var __uniformDefaults:Map<String, String> = [];
@@ -52,7 +49,7 @@ class FunkinShader extends FlxRuntimeShader implements IHScriptCustomBehaviour {
 		glslVer = version ?? Flags.DEFAULT_GLSL_VERSION;
 		__rawFragmentSource = fragmentSource;
 		__rawVertexSource = vertexSource;
-		super(fragmentSource != null ? __prepareSource(fragmentSource, false) : null, vertexSource != null ? __prepareSource(vertexSource, true) : null);
+		super(fragmentSource != null ? __prepareSource(fragmentSource, false) : null, vertexSource != null ? __prepareSource(vertexSource, true) : null, version);
 	}
 
 	public static function fromFile(fragmentPath:String, ?vertexPath:String, ?version:String):FunkinShader {
@@ -87,7 +84,7 @@ class FunkinShader extends FlxRuntimeShader implements IHScriptCustomBehaviour {
 		return this;
 	}
 
-	function _fromFile(fragmentPath:Null<String>, vertexPath:Null<String>, version:Null<String>):Void {
+	override function _fromFile(fragmentPath:Null<String>, vertexPath:Null<String>, version:Null<String>):Void {
 		if (version != null) glslVer = version;
 
 		_fragmentFilePath = fragmentPath;
