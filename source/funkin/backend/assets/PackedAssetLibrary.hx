@@ -80,12 +80,6 @@ class PackedAssetLibrary extends AssetLibrary implements IModsAssetLibrary {
 		if (!folder.endsWith("/")) folder += "/";
 		var index = folders ? folderIndex : fileIndex;
 		var entries = index.get(folder);
-		#if android
-		if (entries == null) {
-			var folded = folder.toLowerCase();
-			if (folded != folder) entries = index.get(folded);
-		}
-		#end
 		return entries != null ? entries.copy() : [];
 	}
 
