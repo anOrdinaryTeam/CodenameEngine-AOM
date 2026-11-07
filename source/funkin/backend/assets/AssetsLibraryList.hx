@@ -15,7 +15,7 @@ class AssetsLibraryList extends AssetLibrary {
 		return [for (l in libraries) getCleanLibrary(l)];
 	}
 
-	public var rootDirectory:String = "./assets";
+	public var rootDirectory:String = "assets";
 	
 	// is true if any library in `libraries` contains some kind of compressed library. 
 	public var hasCompressedLibrary(get, never):Bool;
@@ -221,7 +221,7 @@ class AssetsLibraryList extends AssetLibrary {
 		Logs.infos("Used cne test / cne build. Switching into source assets.");
 		switchToSourceAssets();
 		#elseif USE_ADAPTED_ASSETS
-		if (sys.FileSystem.exists('./${Main.pathBack}assets/') && !sys.FileSystem.exists('./assets/')) {
+		if (sys.FileSystem.exists('${Main.pathBack}assets/') && !sys.FileSystem.exists('assets/')) {
 			Logs.infos("Source assets detected. Switching into source assets.");
 			switchToSourceAssets();
 		}
@@ -242,11 +242,11 @@ class AssetsLibraryList extends AssetLibrary {
 	#if sys
 	inline function switchToSourceAssets() {
 		#if MOD_SUPPORT
-		ModsFolder.modsPath = './${Main.pathBack}mods/';
-		ModsFolder.addonsPath = './${Main.pathBack}addons/';
+		ModsFolder.modsPath = '${Main.pathBack}mods/';
+		ModsFolder.addonsPath = '${Main.pathBack}addons/';
 		#end
 
-		rootDirectory = './${Main.pathBack}assets/';
+		rootDirectory = '${Main.pathBack}assets/';
 	}
 	#end
 

@@ -88,6 +88,11 @@ class ModSwitchMenu extends MusicBeatSubstate {
 		add(alphabets);
 
 		addons = FileSystem.exists(ModsFolder.addonsPath) && FileSystem.isDirectory(ModsFolder.addonsPath) ? FileSystem.readDirectory(ModsFolder.addonsPath) : [];
+		#if mobile
+		// addons packed in the app; one on disk wins
+		final packedAddons = ModsFolder.getPackedFolders(ModsFolder.addonsPath);
+		for (addon in packedAddons) if (!addons.contains(addon)) addons.push(addon);
+		#end
 
 		addonObjs = new FlxTypedGroup<Alphabet>();
 		addonChecks = new FlxTypedGroup<FlxSprite>();
@@ -95,7 +100,7 @@ class ModSwitchMenu extends MusicBeatSubstate {
 		var idx = addons.length;
 		while (idx-- > 0) {
 			var mod = addons[idx];
-			if (!FileSystem.isDirectory(ModsFolder.addonsPath + mod) && !Flags.ALLOWED_ZIP_EXTENSIONS.contains(Path.extension(mod))) {
+			if (#if mobile !packedAddons.contains(mod) && #end !FileSystem.isDirectory(ModsFolder.addonsPath + mod) && !Flags.ALLOWED_ZIP_EXTENSIONS.contains(Path.extension(mod))) {
 				addons.splice(idx, 1);
 				continue;
 			}
