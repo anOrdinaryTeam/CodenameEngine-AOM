@@ -227,7 +227,12 @@ class AssetsLibraryList extends AssetLibrary {
 		}
 		#end
 
+		#if mobile
+		// bundled assets are packed in the app, there is no assets folder to read
+		__defaultLibraries.push(ModsFolder.prepareModLibrary('assets', new PackedAssetLibrary(getCleanLibrary(this.base), 'assets'), true, SOURCE));
+		#else
 		__defaultLibraries.push(ModsFolder.loadLibraryFromFolder('assets', rootDirectory, true, null, SOURCE));
+		#end
 
 		#end
 
