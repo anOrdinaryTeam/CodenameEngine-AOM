@@ -307,25 +307,11 @@ class Options
 	}
 
 	public static function applyFramePacerMode() {
-		// anOrdinaryTeam/lime (ShadowEngineTeam/lime) has no native frame pacer:
-		// "Display" caps at the monitor refresh rate, "Unlimited" removes the cap,
-		// "Off" / "Adaptive" use the Framerate option.
-		var _framerate = switch (framePacerMode) {
-			case 3: 0;
-			case 2: getDisplayRefreshRate();
-			default: framerate;
-		}
+		Lib.application.window.framePacerMode = framePacerMode == 3 ? 0 : framePacerMode;
+
+		var _framerate = framePacerMode == 3 ? 0 : framerate;
 		if (FlxG.updateFramerate < _framerate) FlxG.drawFramerate = FlxG.updateFramerate = _framerate;
 		else FlxG.updateFramerate = FlxG.drawFramerate = _framerate;
-	}
-
-	static function getDisplayRefreshRate():Int {
-		var rate = 0;
-		#if (lime && !web)
-		final window = Lib.application != null ? Lib.application.window : null;
-		if (window != null && window.displayMode != null) rate = window.displayMode.refreshRate;
-		#end
-		return rate > 0 ? rate : framerate;
 	}
 
 	public static function applyVSync() {
