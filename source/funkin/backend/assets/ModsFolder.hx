@@ -91,12 +91,49 @@ class ModsFolder {
 			if (!FileSystem.exists('$path.$ext')) continue;
 			return loadLibraryFromZip('$path'.toLowerCase(), '$path.$ext', force, modName);
 		}
+		#if mobile
+		// not on disk: maybe packed in the app, like mods/AOM-Revival
+		if (!FileSystem.exists(path) && isPackedMod(path))
+			return prepareModLibrary('$path'.toLowerCase(), new PackedModFolderLibrary(packedSource(), path, '$path'.toLowerCase(), modName), force, MODS);
+		#end
 		return loadLibraryFromFolder('$path'.toLowerCase(), '$path', force, modName);
 
 		#else
 		return null;
 		#end
 	}
+
+	#if mobile
+	/**
+	 * The embedded library, where the mods packed in the app are.
+	 */
+	public static function packedSource():lime.utils.AssetLibrary
+		return AssetsLibraryList.getCleanLibrary(lime.utils.Assets.getLibrary("default"));
+
+	/**
+	 * Whether `path` (like `./mods/AOM-Revival`) is a mod packed in the app.
+	 */
+	public static function isPackedMod(path:String):Bool
+		return PackedModFolderLibrary.isPacked(packedSource(), path);
+
+	/**
+	 * Names of the mods packed in the app's `mods/` folder.
+	 */
+	public static function getPackedModsList():Array<String> {
+		final mods:Array<String> = [];
+		final lib = packedSource();
+		if (lib == null) return mods;
+		final start = PackedModFolderLibrary.normalize(modsPath) + "/";
+		for (id in lib.list(null)) {
+			if (!id.startsWith(start)) continue;
+			final slash = id.indexOf("/", start.length);
+			if (slash == -1) continue; // a file directly in mods/, not a mod
+			final mod = id.substring(start.length, slash);
+			if (!mods.contains(mod)) mods.push(mod);
+		}
+		return mods;
+	}
+	#end
 
 	public static function getModConfig(mod:String):Map<String, Map<String, String>> {
 		for (ext in Flags.ALLOWED_ZIP_EXTENSIONS) {
@@ -118,6 +155,13 @@ class ModsFolder {
 		if (FileSystem.exists(filePath))
 			return IniUtil.parseString(sys.io.File.getContent(filePath));
 
+		#if mobile
+		final lib = packedSource();
+		final packedPath = PackedModFolderLibrary.normalize(filePath);
+		if (lib != null && lib.exists(packedPath, null))
+			return IniUtil.parseString(lib.getText(packedPath));
+		#end
+
 		return [];
 	}
 
@@ -129,12 +173,17 @@ class ModsFolder {
 		
 		final modsList:Array<String> = FileSystem.readDirectory(modsPath);
 
-		if (modsList == null || modsList.length <= 0) return mods;
-
-		for (modFolder in modsList) {
+		if (modsList != null) for (modFolder in modsList) {
 			if (FileSystem.isDirectory(modsPath + modFolder)) mods.push(modFolder);
 			else if (Flags.ALLOWED_ZIP_EXTENSIONS.contains(Path.extension(modFolder))) mods.push(Path.withoutExtension(modFolder));
 		}
+
+		#if mobile
+		// mods packed in the app; one with the same name on disk wins
+		for (mod in getPackedModsList()) if (!mods.contains(mod)) mods.push(mod);
+		#end
+
+		if (mods.length <= 0) return mods;
 		
 		if (sortingOptions != null) {
 		    var sortForge:StringBuf = new StringBuf();
