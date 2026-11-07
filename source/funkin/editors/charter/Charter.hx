@@ -631,13 +631,13 @@ class Charter extends UIState {
 		// TODO: MAYBE MAKE WAVEFORMS WORK TOO FOR STREAMED SOUNDS??
 
 		var data = FlxSoundData.fromAssetKey(Paths.inst(__song, __diff, PlayState.SONG.meta.instSuffix), false);
-		if (data.isStreamable) data.buffer.load();
+		if (data.isStreamable) data.load();
 
 		FlxG.sound.setMusic(FlxG.sound.load(data));
 
 		if (Assets.exists(Paths.voices(__song, __diff, PlayState.SONG.meta.vocalsSuffix))) {
 			data = FlxSoundData.fromAssetKey(Paths.voices(__song, __diff, PlayState.SONG.meta.vocalsSuffix), false);
-			if (data.isStreamable) data.buffer.load();
+			if (data.isStreamable) data.load();
 
 			vocals = FlxG.sound.load(data);
 		}
