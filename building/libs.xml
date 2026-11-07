@@ -6,7 +6,7 @@
 		<!-- Hxcpp & OpenFL & Lime (Required for Flixel) -->
 		<git name="hxcpp" url="https://github.com/anOrdinaryTeam/libhxcpp" />
 		<git name="openfl" url="https://github.com/anOrdinaryTeam/openfl" ref="claude/keen-keller-6tozpk" skipDeps="true" />
-		<git name="lime" url="https://github.com/anOrdinaryTeam/lime" skipDeps="true" />
+		<git name="lime" url="https://github.com/anOrdinaryTeam/lime" ref="claude/keen-keller-6tozpk" skipDeps="true" />
 
 		<!-- Flixel -->
 		<git name="flixel" url="https://github.com/anOrdinaryTeam/flixel" ref="claude/keen-keller-6tozpk" skipDeps="true" />
