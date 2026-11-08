@@ -413,7 +413,7 @@ final class Conductor
 		else {
 			var state = FlxG.state;
 			while (state != null) {
-				if (state is IBeatCancellableReceiver && cast(FlxG.state, IBeatCancellableReceiver).cancelConductorUpdate) return;
+				if (state is IBeatCancellableReceiver && (cast state:IBeatCancellableReceiver).cancelConductorUpdate) return;
 				state = state.subState;
 			}
 		}
@@ -464,7 +464,7 @@ final class Conductor
 			var state = FlxG.state;
 			while (state != null) {
 				if (state is IBeatReceiver && (state.subState == null || state.persistentUpdate)) {
-					var st = cast(state, IBeatReceiver);
+					var st:IBeatReceiver = cast state;
 
 					if (__updateStep) {
 						if (curStep > oldStep) for (i in oldStep...curStep) st.stepHit(i + 1);
