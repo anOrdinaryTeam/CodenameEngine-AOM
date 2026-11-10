@@ -27,8 +27,7 @@ import openfl.utils.AssetLibrary;
 import sys.FileSystem;
 import sys.io.File;
 #if android
-import extension.androidtools.content.Context;
-import extension.androidtools.os.Build;
+import android.content.Context;
 #end
 
 #if IMGUI_ENABLED
@@ -282,7 +281,7 @@ class Main extends Sprite
 			Sys.setCwd(haxe.io.Path.directory(Sys.programPath()));
 		}
 		#elseif android
-		Sys.setCwd(haxe.io.Path.addTrailingSlash(VERSION.SDK_INT > 30 ? Context.getObbDir() : Context.getExternalFilesDir()));
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(Context.getExternalFilesDir()));
 		#elseif (ios || switch)
 		Sys.setCwd(haxe.io.Path.addTrailingSlash(openfl.filesystem.File.applicationStorageDirectory.nativePath));
 		#end
